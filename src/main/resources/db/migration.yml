@@ -1,4 +1,5 @@
 databaseChangeLog:
+  - logicalFilePath: db/changelog/migration.yml
   - includeAll:
       path: changelog
       relativeToChangelogFile: true

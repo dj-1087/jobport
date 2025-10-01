@@ -19,7 +19,7 @@ spring:
 
   liquibase:
     change-log: classpath:/db/migration.yml
-    enabled: false
+#    enabled: false
 
 ssh:
   host: ${DB_SERVER_HOST}
