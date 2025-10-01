@@ -7,11 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 
 @Configuration
 @EnableConfigurationProperties(SshTunnelProperties.class)
-public class DataSourceConfig {
+public class SshTunnelConfig {
 
     @Bean(name = "sshTunnelManager", initMethod = "start", destroyMethod = "stop")
     public SshTunnelManager sshTunnelManager(SshTunnelProperties props) {
