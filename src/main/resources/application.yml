@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: jobport
+
+  ssh:
+    host: ${DB_SERVER_HOST}
+    port: ${DB_SERVER_SSH_PORT}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    tunnel:
+      localPort: 13306             # 로컬에서 열 포워딩 포트
+      remoteHost: ${DB_HOST}
+      remotePort: ${DB_PORT}
+
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect   # (?? ???? ??)
+
+  liquibase:
+    change-log: classpath:/db/migration.yml
+#    enabled: false
