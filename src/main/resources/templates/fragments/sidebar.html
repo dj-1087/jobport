@@ -22,7 +22,7 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">
+    <div class="sidebar-heading ko-word-wrap">
         공공기관 채용공고 조회
     </div>
 
@@ -42,7 +42,7 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">
+    <div class="sidebar-heading ko-word-wrap">
         이력 관리
     </div>
 
@@ -58,6 +58,20 @@
             <span>자기소개서</span></a>
     </li>
 
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading ko-word-wrap">
+        통계
+    </div>
+
+    <li class="nav-item" th:classappend="${#strings.startsWith(currentUri, '/recruitment-statistics')} ? ' active'">
+        <a class="nav-link" th:href="@{/recruitment-statistics}">
+            <!--                <i class="fas fa-fw fa-chart-area"></i>-->
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>채용 현황</span></a>
+    </li>
     <!-- 메뉴 계속… -->
 
     <!-- Divider -->
