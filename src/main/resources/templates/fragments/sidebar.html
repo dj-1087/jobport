@@ -1,0 +1,22 @@
+<!-- templates/fragments/sidebar.html -->
+<nav xmlns:th="http://www.thymeleaf.org" th:fragment="sidebar"
+     class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/}">
+<!--        <div class="sidebar-brand-text">JobPort</div>-->
+        <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-laugh-wink"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">JobPort</div>
+    </a>
+
+    <hr class="sidebar-divider my-0"/>
+
+    <li class="nav-item" th:classappend="${#httpServletRequest.requestURI.startsWith('/admin/dashboard')} ? 'active'">
+        <a class="nav-link" th:href="@{/admin/dashboard}">
+            <span>대시보드</span>
+        </a>
+    </li>
+
+    <!-- 메뉴 계속… -->
+</nav>
