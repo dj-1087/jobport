@@ -6,12 +6,19 @@
 </head>
 <body>
 <section layout:fragment="content">
-    <h1 class="h3 mb-4 text-gray-800">대시보드</h1>
-    <!-- 여기부터 이 페이지 전용 콘텐츠 -->
-    <div class="row">
-        <div class="col-xl-3 col-md-6 mb-4">…</div>
-        <!-- 카드/차트 등 SB Admin 2 컴포넌트 배치 -->
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">대시보드</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                class="fas fa-download fa-sm text-white-50"></i> 통계 다운로드</a>
     </div>
+    <div class="row">
+        <section th:replace="~{pages/statistic/charts/sample :: sampleChart}"></section>
+    </div>
+    <div class="row">
+        <section th:replace="~{pages/recruitment/table :: sampleTable}"></section>
+    </div>
+    <th:block th:replace="~{pages/statistic/charts/sample :: chartScripts}"></th:block>
 </section>
 </body>
 </html>
