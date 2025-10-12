@@ -1,0 +1,5 @@
+/* CSS (sb-admin-2.css 뒤에 로드) */
+.ko-word-wrap {
+    white-space: normal !important;   /* 줄바꿈 허용 */
+    word-break: keep-all !important;  /* 단어(띄어쓰기) 기준으로만 줄바꿈 */
+}
