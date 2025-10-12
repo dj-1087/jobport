@@ -14,7 +14,7 @@
 <body id="page-top">
 <div id="wrapper">
 
-    <aside th:replace="~{fragments/sidebar :: sidebar(currentUri=${currentUri})}"></aside>
+    <nav th:replace="~{fragments/sidebar :: sidebar(currentUri=${currentUri})}"></nav>
 
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
@@ -33,5 +33,6 @@
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sb-admin-2.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
 </body>
 </html>
