@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: jobport
+
+  datasource:
+    url: jdbc:mysql://${LOCAL_DB_HOST}:${LOCAL_DB_PORT}/${LOCAL_DB_SCHEMA}}?characterEncoding=utf8&serverTimezone=Asia/Seoul
+    username: ${LOCAL_DB_USERNAME}
+    password: ${LOCAL_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  docker:
+    compose:
+      file: ./compose.yml
+
+ssh:
+  host: ${DB_SERVER_HOST}
+  port: ${DB_SERVER_SSH_PORT}
+  username: ${DB_SERVER_USERNAME}
+  password: ${DB_SERVER_PASSWORD}
+  tunnel:
+    localPort: 13306             # 로컬에서 열 포워딩 포트
+    remoteHost: ${DB_HOST}
+    remotePort: ${DB_PORT}

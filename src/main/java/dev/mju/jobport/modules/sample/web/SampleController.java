@@ -1,4 +1,4 @@
-package dev.mju.jobport.domain.sample.controller;
+package dev.mju.jobport.modules.sample.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

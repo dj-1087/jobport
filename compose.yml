@@ -1,0 +1,10 @@
+services:
+  mysql:
+    image: mysql:5.7.42
+    environment:
+      - MYSQL_DATABASE=jobport
+      - MYSQL_ROOT_PASSWORD=${LOCAL_DB_ROOT_PASSWORD:-secret}
+      - MYSQL_USER=${LOCAL_DB_ROOT_PASSWORD:-user}
+      - MYSQL_PASSWORD=${LOCAL_DB_ROOT_PASSWORD:-password}
+    ports:
+      - '3306:3306'

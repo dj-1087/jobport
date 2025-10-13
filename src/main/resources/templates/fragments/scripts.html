@@ -1,0 +1,17 @@
+<!-- templates/fragments/scripts.html -->
+<th:block th:fragment="scripts">
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.js}"></script>
+    <script>
+        $(function () {
+            // SB Admin 2처럼 상단바/드롭다운 등 오버플로우 이슈 방지를 위해 container:'body' 권장
+            $('body').tooltip({
+                selector: '[data-toggle="tooltip"]',
+                container: 'body',
+                trigger: 'hover focus'
+            });
+        });
+    </script>
+</th:block>

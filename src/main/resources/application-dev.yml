@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: jobport
+
+  datasource:
+    url: jdbc:mysql://${REMOTE_DB_HOST}:${REMOTE_DB_PORT}/${REMOTE_DB_SCHEMA}}?characterEncoding=utf8&serverTimezone=Asia/Seoul
+    username: ${REMOTE_DB_USERNAME}
+    password: ${REMOTE_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+ssh:
+  host: ${REMOTE_DB_SERVER_HOST}
+  port: ${REMOTE_DB_SERVER_SSH_PORT}
+  username: ${REMOTE_DB_SERVER_USERNAME}
+  password: ${REMOTE_DB_SERVER_PASSWORD}
+  tunnel:
+    localPort: 13306             # 로컬에서 열 포워딩 포트
+    remoteHost: ${REMOTE_DB_HOST}
+    remotePort: ${REMOTE_DB_PORT}
