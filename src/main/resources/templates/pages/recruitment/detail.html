@@ -1,0 +1,163 @@
+<!-- templates/pages/index.html -->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/base}">
+<head>
+    <title layout:fragment="title">채용 공고 상세 정보</title>
+
+    <th:block layout:fragment="head-extra">
+
+    </th:block>
+</head>
+<body>
+<section layout:fragment="content">
+    <!-- Page Heading -->
+    <h1 class="d-flex align-items-center h3 text-center text-gray-800">
+        <span class="badge badge-primary"
+              th:text="${jobPostingDetail.jobPosting.institutionName}">
+            공공기관
+        </span>
+        &nbsp
+        <span th:text="${jobPostingDetail.jobPosting.title}">
+            공공기관 채용 정보
+        </span>
+    </h1>
+    <div class="mb-4">
+        <span class="font-weight-bold mr-2">공고 URL :</span>
+        <a th:href="${jobPostingDetail.jobPosting.postingUrl}"
+           th:text="${jobPostingDetail.jobPosting.postingUrl}"
+           target="_blank">
+            www.sample.com
+        </a>
+    </div>
+<!--    <div class="row">-->
+<!--        <section th:replace="~{pages/recruitment/list :: listTable(${jobPostings})}"></section>-->
+<!--    </div>-->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+
+            <table class="table mb-0">
+                <tbody>
+                <tr>
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        표준직무(NCS)
+                    </th>
+                    <td th:text="${jobPostingDetail.jobPosting.ncsJob}">
+                        보건,의료
+                    </td>
+
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        학력정보
+                    </th>
+                    <td th:text="${jobPostingDetail.jobPosting.educationInfo}">
+                        학력무관
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        근무분야
+                    </th>
+                    <td th:text="${jobPostingDetail.jobPosting.jobField}">
+                        시설직
+                    </td>
+
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        채용구분
+                    </th>
+                    <td th:text="${jobPostingDetail.jobPosting.recruitmentType}">
+                        신입
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        고용형태
+                    </th>
+                    <td th:text="${jobPostingDetail.jobPosting.employmentType}">
+                        정규직
+                    </td>
+
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        대체인력여부
+                    </th>
+                    <td th:text="${jobPostingDetail.jobPosting.isReplacement ? '예' : '아니오'}">
+                        아니오
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        근무지
+                    </th>
+                    <td th:text="${jobPostingDetail.jobPosting.workLocation}">
+                        대구
+                    </td>
+
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        급여정보
+                    </th>
+                    <td>
+                        <a class="btn btn-primary btn-sm"
+                           th:href="${jobPostingDetail.jobPosting.salaryInfo}"
+                           target="_blank"
+                        >
+                            <span>신입 / 평균</span>
+                            <i class="fas fa-search ml-1"></i>
+                        </a>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        채용인원
+                    </th>
+                    <td th:text="${jobPostingDetail.jobPosting.headcount}">
+                        1명
+                    </td>
+
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        우대조건
+                    </th>
+                    <td th:text="${jobPostingDetail.jobPosting.preferenceCond}">
+                        취업보호(지원)대상자, 관련법에 의거 등록된 장애인
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        채용기간
+                    </th>
+                    <td th:text="${#temporals.format(jobPostingDetail.jobPosting.postedDate, 'yy.MM.dd') + ' ~ ' + #temporals.format(jobPostingDetail.jobPosting.deadlineDate, 'yy.MM.dd')}">
+                        25.11.19 ~ 25.12.03
+                    </td>
+
+                    <th>
+                        <span class="dot-icon mr-2"></span>
+                        등록일
+                    </th>
+                    <td th:text="${#temporals.format(jobPostingDetail.jobPosting.postedDate, 'yyyy.MM.dd')}">
+                        2025.11.19
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</section>
+<!-- fragment별 script 모음 -->
+<th:block layout:fragment="script-extra">
+</th:block>
+</body>
+</html>

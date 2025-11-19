@@ -1,0 +1,69 @@
+<th:block th:fragment="head-extra">
+    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+</th:block>
+
+<div th:fragment="listTable(jobPostings)" class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">채용 공고 목록</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>채용제목</th>
+                    <th>기관명</th>
+                    <th>근무지</th>
+                    <th>고용형태</th>
+                    <th>등록일</th>
+                    <th>마감일</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="jobPosting : ${jobPostings}"
+                    th:onclick="|window.location.href='/job-postings/${jobPosting.id}'|"
+                    style="cursor:pointer;">
+                    <td th:text="${jobPosting.title}">채용제목</td>
+                    <td th:text="${jobPosting.institutionName}">기관명</td>
+                    <td th:text="${jobPosting.workLocation}">근무지</td>
+                    <td th:text="${jobPosting.employmentType}">고용형태</td>
+                    <td th:text="${#temporals.format(jobPosting.postedDate, 'yyyy/MM/dd')}">등록일</td>
+                    <td th:text="${#temporals.format(jobPosting.deadlineDate, 'yyyy/MM/dd')}">마감일</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<th:block th:fragment="script-extra">
+    <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                paging: true,          // 페이징 사용
+                searching: true,       // 검색창
+                lengthChange: true,    // 페이지 당 개수 선택
+                pageLength: 10,        // 기본 10개씩
+                ordering: true,        // 컬럼 정렬
+                language: {
+                    "lengthMenu": "_MENU_ 개씩 보기",
+                    "zeroRecords": "데이터가 없습니다.",
+                    "info": "총 _TOTAL_개 중 _START_ ~ _END_",
+                    "infoEmpty": "0개",
+                    "infoFiltered": "(총 _MAX_개에서 필터링됨)",
+                    "search": "검색 : ",
+                    "paginate": {
+                        "first": "처음",
+                        "last": "마지막",
+                        "next": "다음",
+                        "previous": "이전"
+                    }
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</th:block>
