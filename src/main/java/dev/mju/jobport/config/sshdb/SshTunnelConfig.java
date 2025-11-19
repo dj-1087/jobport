@@ -1,7 +1,6 @@
-package dev.mju.jobport.config;
+package dev.mju.jobport.config.sshdb;
 
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -11,7 +10,7 @@ import javax.sql.DataSource;
 
 @Profile("dev")
 @Configuration
-@EnableConfigurationProperties(SshTunnelProperties.class)
+//@EnableConfigurationProperties(SshTunnelProperties.class)
 public class SshTunnelConfig {
 
     @Bean(name = "sshTunnelManager", initMethod = "start", destroyMethod = "stop")
