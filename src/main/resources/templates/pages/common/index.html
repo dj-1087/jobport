@@ -3,6 +3,11 @@
       layout:decorate="~{layouts/base}">
 <head>
     <title layout:fragment="title">대시보드</title>
+
+    <!-- index가 포함한 fragment들의 head-extra를 모아서 전달 -->
+    <th:block layout:fragment="head-extra">
+        <th:block th:replace="~{fragments/recruitment/list :: head-extra}"></th:block>
+    </th:block>
 </head>
 <body>
 <section layout:fragment="content">
@@ -16,9 +21,13 @@
         <section th:replace="~{pages/statistic/charts/sample :: sampleChart}"></section>
     </div>
     <div class="row">
-        <section th:replace="~{pages/recruitment/table :: sampleTable}"></section>
+        <section th:replace="~{fragments/recruitment/list :: listTable(${jobPostings})}"></section>
     </div>
     <th:block th:replace="~{pages/statistic/charts/sample :: chartScripts}"></th:block>
 </section>
+<!-- fragment별 script 모음 -->
+<th:block layout:fragment="script-extra">
+    <th:block th:replace="~{fragments/recruitment/list :: script-extra}"></th:block>
+</th:block>
 </body>
 </html>

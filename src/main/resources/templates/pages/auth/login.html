@@ -1,0 +1,95 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/base}">
+
+<head>
+    <title layout:fragment="title">로그인</title>
+    <th:block layout:fragment="head-extra"></th:block>
+</head>
+<body>
+<section layout:fragment="content">
+
+    <div class="container">
+
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+
+            <div class="col-xl-5 col-lg-6 col-md-8">
+
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="p-5">
+                            <div class="text-center mb-4">
+                                <h1 class="h4 text-gray-900 font-weight-bold mb-1">로그인</h1>
+                                <p class="mb-0 text-muted small">
+                                    서비스를 이용하시려면 로그인 해주세요.
+                                </p>
+                            </div>
+
+                            <!-- 에러 메시지 (필요시) -->
+                            <div th:if="${param.error}" class="alert alert-danger py-2 small">
+                                아이디 또는 비밀번호가 올바르지 않습니다.
+                            </div>
+
+                            <!-- 일반 아이디/비밀번호 로그인 -->
+                            <form class="user" th:action="@{/login}" method="post">
+                                <div class="form-group">
+                                    <input type="text"
+                                           class="form-control form-control-user"
+                                           placeholder="아이디"
+                                           name="username"
+                                           autocomplete="username">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password"
+                                           class="form-control form-control-user"
+                                           placeholder="비밀번호"
+                                           name="password"
+                                           autocomplete="current-password">
+                                </div>
+
+                                <button type="submit"
+                                        class="btn btn-primary btn-user btn-block">
+                                    로그인
+                                </button>
+                            </form>
+
+                            <hr>
+
+                            <!-- 소셜 로그인 영역 -->
+                            <div class="social-login-area mt-3">
+                                <p class="text-center small text-muted mb-2">
+                                    또는 소셜 계정으로 로그인
+                                </p>
+
+                                <!-- ✅ 카카오 로그인 버튼 -->
+                                <a th:href="@{/oauth2/authorization/kakao}"
+                                   class="btn btn-kakao btn-user btn-block d-flex align-items-center justify-content-center">
+                                    <span class="kakao-icon mr-2">K</span>
+                                    <span>카카오로 로그인</span>
+                                </a>
+                            </div>
+
+                            <hr>
+
+                            <div class="text-center mt-3">
+                                <a class="small" th:href="@{/auth/find-id}">아이디 찾기</a>
+                                <span class="mx-1 text-muted">|</span>
+                                <a class="small" th:href="@{/auth/find-password}">비밀번호 찾기</a>
+                                <span class="mx-1 text-muted">|</span>
+                                <a class="small" th:href="@{/auth/signup}">회원가입</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+</body>
+</html>
