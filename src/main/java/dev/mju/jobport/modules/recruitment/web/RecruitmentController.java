@@ -1,8 +1,7 @@
 package dev.mju.jobport.modules.recruitment.web;
 
-import dev.mju.jobport.modules.recruitment.application.JobPostingService;
-import dev.mju.jobport.modules.recruitment.application.dto.JobPostingDetailDTO;
-import dev.mju.jobport.modules.recruitment.domain.JobPosting;
+import dev.mju.jobport.modules.recruitment.application.RecruitmentService;
+import dev.mju.jobport.modules.recruitment.domain.Recruitment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,14 +14,14 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/job-postings")
-public class JobPostingController {
-    private final JobPostingService jobPostingService;
+public class RecruitmentController {
+    private final RecruitmentService recruitmentService;
 
     @GetMapping("")
     public String index(Model model) {
-        List<JobPosting> jobPostings = jobPostingService.findAll();
+        List<Recruitment> recruitments = recruitmentService.findAll();
 
-        model.addAttribute("jobPostings", jobPostings);
+        model.addAttribute("recruitments", recruitments);
         return "pages/recruitment/index";
     }
 
@@ -31,9 +30,9 @@ public class JobPostingController {
             @PathVariable long jobPostingId,
             Model model
     ) throws Exception {
-        JobPostingDetailDTO jobPostingDetailDTO = jobPostingService.findAllDetail(jobPostingId);
+        Recruitment recruitment = recruitmentService.find(jobPostingId);
 
-        model.addAttribute("jobPostingDetail", jobPostingDetailDTO);
+        model.addAttribute("recruitment", recruitment);
         return "pages/recruitment/detail";
     }
 }

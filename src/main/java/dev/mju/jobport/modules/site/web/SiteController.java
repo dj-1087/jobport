@@ -1,7 +1,7 @@
 package dev.mju.jobport.modules.site.web;
 
-import dev.mju.jobport.modules.recruitment.application.JobPostingService;
-import dev.mju.jobport.modules.recruitment.domain.JobPosting;
+import dev.mju.jobport.modules.recruitment.application.RecruitmentService;
+import dev.mju.jobport.modules.recruitment.domain.Recruitment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,13 +13,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SiteController {
 
-    private final JobPostingService jobPostingService;
+    private final RecruitmentService recruitmentService;
 
     @GetMapping("/")
     public String index(Model model) {
-        List<JobPosting> jobPostings = jobPostingService.findAll();
+        List<Recruitment> recruitments = recruitmentService.findAll();
 
-        model.addAttribute("jobPostings", jobPostings);
+        model.addAttribute("recruitments", recruitments);
         return "pages/common/index";
+    }
+
+
+    @GetMapping("/resumes/new")
+    public String resumeForm(Model model) {
+
+        return "pages/resume/new";
+    }
+
+    @GetMapping("/resumes")
+    public String resume(Model model) {
+
+        return "pages/resume/index";
     }
 }

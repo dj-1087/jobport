@@ -2,7 +2,7 @@
     <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
 </th:block>
 
-<div th:fragment="listTable(jobPostings)" class="card shadow mb-4">
+<div th:fragment="listTable(recruitments)" class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">채용 공고 목록</h6>
     </div>
@@ -21,15 +21,33 @@
                 </thead>
                 <tbody>
 
-                <tr th:each="jobPosting : ${jobPostings}"
-                    th:onclick="|window.location.href='/job-postings/${jobPosting.id}'|"
+                <tr th:each="recruitment : ${recruitments}"
+                    th:onclick="|window.location.href='/job-postings/${recruitment.id}'|"
                     style="cursor:pointer;">
-                    <td th:text="${jobPosting.title}">채용제목</td>
-                    <td th:text="${jobPosting.institutionName}">기관명</td>
-                    <td th:text="${jobPosting.workLocation}">근무지</td>
-                    <td th:text="${jobPosting.employmentType}">고용형태</td>
-                    <td th:text="${#temporals.format(jobPosting.postedDate, 'yyyy/MM/dd')}">등록일</td>
-                    <td th:text="${#temporals.format(jobPosting.deadlineDate, 'yyyy/MM/dd')}">마감일</td>
+                    <td th:text="${recruitment.title}">채용제목</td>
+                    <td th:text="${recruitment.institution.institutionName}">기관명</td>
+                    <td>
+                         <span
+                               th:each="loc : ${recruitment.workLocation}"
+                               th:text="${loc.workLocationName}">
+                                    근무지
+                                </span>
+                        <span th:if="${#lists.isEmpty(recruitment.workLocation)}">
+                                    -
+                                </span>
+                    </td>
+                    <td>
+                        <span
+                              th:each="type : ${recruitment.employmentTypeList}"
+                              th:text="${type.employmentTypeName}">
+                                정규직
+                            </span>
+                        <span th:if="${#lists.isEmpty(recruitment.employmentTypeList)}" >
+                                -
+                            </span>
+                    </td>
+                    <td th:text="${#temporals.format(recruitment.regDate, 'yyyy/MM/dd')}">등록일</td>
+                    <td th:text="${#temporals.format(recruitment.closeDate, 'yyyy/MM/dd')}">마감일</td>
                 </tr>
                 </tbody>
             </table>
