@@ -1,0 +1,391 @@
+<!-- templates/pages/resume/new.html -->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/base}">
+<head>
+    <title layout:fragment="title">이력 사항 등록</title>
+
+    <th:block layout:fragment="head-extra">
+        <style>
+            .form-section-title {
+                font-size: 0.9rem;
+                font-weight: 700;
+                color: #4e73df;
+                text-transform: uppercase;
+                letter-spacing: .03em;
+                margin-bottom: .5rem;
+            }
+
+            .form-section-sub {
+                font-size: 0.8rem;
+                color: #858796;
+                margin-bottom: 1rem;
+            }
+
+            .required-label::after {
+                content: " *";
+                color: #e74a3b;
+            }
+
+            .small-help {
+                font-size: 0.75rem;
+                color: #858796;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<section layout:fragment="content">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">이력 사항 등록</h1>
+            <div class="small text-gray-600 mt-1">
+                공공기관 지원을 위한 기본 이력 정보를 입력해주세요. <span class="text-danger">*</span> 표시는 필수 입력 항목입니다.
+            </div>
+        </div>
+        <div>
+            <a th:href="@{/resumes}" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm mr-2">
+                <i class="fas fa-arrow-left fa-sm text-white-50"></i> 목록으로
+            </a>
+            <!-- 실제 저장 기능 연동 전이라 submit 버튼은 샘플 동작 -->
+            <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+                    onclick="alert('샘플 페이지입니다. 실제 저장 기능은 연동 후 동작합니다.');">
+                <i class="fas fa-save fa-sm text-white-50"></i> 임시 저장
+            </button>
+        </div>
+    </div>
+
+    <!-- 이력서 작성 폼 -->
+    <!-- 실제 연동 시 th:action에 컨트롤러 경로 설정, method="post" 사용 -->
+    <form action="#" method="post">
+        <div class="row">
+            <!-- 기본 정보 / 희망 조건 -->
+            <div class="col-lg-4 mb-4">
+                <!-- 기본 정보 -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-id-card-alt mr-1"></i> 기본 정보
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="name" class="required-label">이름</label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   placeholder="예) 홍길동">
+                        </div>
+                        <div class="form-group">
+                            <label for="birthDate" class="required-label">생년월일</label>
+                            <input type="date" class="form-control" id="birthDate" name="birthDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="address" class="required-label">거주지</label>
+                            <input type="text" class="form-control" id="address" name="address"
+                                   placeholder="예) 서울특별시 마포구">
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="required-label">이메일</label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                   placeholder="예) jobport.sample@jobport.kr">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone" class="required-label">연락처</label>
+                            <input type="text" class="form-control" id="phone" name="phone"
+                                   placeholder="예) 010-1234-5678">
+                        </div>
+                        <div class="form-group mb-0">
+                            <label for="jobSearchStatus">구직 상태</label>
+                            <select id="jobSearchStatus" name="jobSearchStatus" class="form-control">
+                                <option value="">선택하세요</option>
+                                <option value="ACTIVE">구직 중 (즉시 입사 가능)</option>
+                                <option value="PASSIVE">관심 공고 위주로 지원 중</option>
+                                <option value="EMPLOYED">재직 중 (이직 고려)</option>
+                            </select>
+                            <div class="small-help mt-1">
+                                현재 상황에 가장 가까운 상태를 선택해주세요.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 희망 조건 -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-bullseye mr-1"></i> 희망 조건
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="desiredJob" class="required-label">희망 직무</label>
+                            <input type="text" class="form-control" id="desiredJob" name="desiredJob"
+                                   placeholder="예) 행정·경영지원 / 채용·인사">
+                        </div>
+                        <div class="form-group">
+                            <label for="desiredRegion" class="required-label">희망 근무지역</label>
+                            <input type="text" class="form-control" id="desiredRegion" name="desiredRegion"
+                                   placeholder="예) 수도권 (서울 · 경기 · 인천)">
+                        </div>
+                        <div class="form-group">
+                            <label for="employmentTypes">희망 고용형태</label>
+                            <select id="employmentTypes" name="employmentTypes" class="form-control" multiple>
+                                <option value="PERMANENT">정규직</option>
+                                <option value="CONTRACT">기간제/계약직</option>
+                                <option value="UNLIMITED">무기계약직</option>
+                                <option value="INTERN">인턴</option>
+                            </select>
+                            <div class="small-help mt-1">
+                                Ctrl(⌘) 키를 누른 상태에서 여러 개를 선택할 수 있습니다.
+                            </div>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label for="desiredSalary">희망 연봉 (선택)</label>
+                            <input type="text" class="form-control" id="desiredSalary" name="desiredSalary"
+                                   placeholder="예) 3,000만원 ~ 3,400만원 수준">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 학력 / 자격·어학 / 핵심 역량 / 자기소개 요약 -->
+            <div class="col-lg-8 mb-4">
+                <!-- 학력 -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-graduation-cap mr-1"></i> 학력
+                        </h6>
+                        <span class="small text-gray-500">대표 학력을 기준으로 입력해주세요.</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="univName" class="required-label">학교명</label>
+                                <input type="text" class="form-control" id="univName" name="univName"
+                                       placeholder="예) ○○대학교">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="major" class="required-label">전공</label>
+                                <input type="text" class="form-control" id="major" name="major"
+                                       placeholder="예) 경영학과 (경영정보 / 인사조직)">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="degree">학위구분</label>
+                                <select id="degree" name="degree" class="form-control">
+                                    <option value="">선택하세요</option>
+                                    <option value="BACHELOR">학사</option>
+                                    <option value="MASTER">석사</option>
+                                    <option value="DOCTOR">박사</option>
+                                    <option value="ASSOCIATE">전문학사</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="schoolPeriodStart" class="required-label">입학일</label>
+                                <input type="month" class="form-control" id="schoolPeriodStart" name="schoolPeriodStart">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="schoolPeriodEnd" class="required-label">졸업(예정)일</label>
+                                <input type="month" class="form-control" id="schoolPeriodEnd" name="schoolPeriodEnd">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label for="gpa">평점</label>
+                                <input type="text" class="form-control" id="gpa" name="gpa" placeholder="예) 3.8">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="gpaScale">만점 기준</label>
+                                <input type="text" class="form-control" id="gpaScale" name="gpaScale"
+                                       placeholder="예) 4.5">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="schoolRemark">비고 (전공 / 복수전공 등)</label>
+                                <input type="text" class="form-control" id="schoolRemark" name="schoolRemark"
+                                       placeholder="예) 복수전공: 데이터사이언스">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 자격 / 어학 -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-certificate mr-1"></i> 자격 · 어학
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-section-title">자격증</div>
+                        <div class="form-section-sub">
+                            자격증이 여러 개인 경우, 대표 2~3개를 위주로 입력해주세요. (필요 시 추후 상세 항목으로 확장 가능)
+                        </div>
+
+                        <!-- 자격증 1 -->
+                        <div class="border rounded p-3 mb-3">
+                            <div class="form-row">
+                                <div class="form-group col-md-5">
+                                    <label for="certName1">자격증명</label>
+                                    <input type="text" class="form-control" id="certName1" name="certName1"
+                                           placeholder="예) 사회조사분석사 2급">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="certOrg1">발행기관</label>
+                                    <input type="text" class="form-control" id="certOrg1" name="certOrg1"
+                                           placeholder="예) 한국산업인력공단">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="certDate1">취득일</label>
+                                    <input type="month" class="form-control" id="certDate1" name="certDate1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 자격증 2 -->
+                        <div class="border rounded p-3 mb-3">
+                            <div class="form-row">
+                                <div class="form-group col-md-5">
+                                    <label for="certName2">자격증명</label>
+                                    <input type="text" class="form-control" id="certName2" name="certName2"
+                                           placeholder="예) 컴퓨터활용능력 1급">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="certOrg2">발행기관</label>
+                                    <input type="text" class="form-control" id="certOrg2" name="certOrg2"
+                                           placeholder="예) 대한상공회의소">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="certDate2">취득일</label>
+                                    <input type="month" class="form-control" id="certDate2" name="certDate2">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section-title mt-3">어학</div>
+
+                        <div class="border rounded p-3 mb-2">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="langTest1">시험명</label>
+                                    <input type="text" class="form-control" id="langTest1" name="langTest1"
+                                           placeholder="예) TOEIC">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="langScore1">점수/등급</label>
+                                    <input type="text" class="form-control" id="langScore1" name="langScore1"
+                                           placeholder="예) 830점">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="langDate1">취득일</label>
+                                    <input type="month" class="form-control" id="langDate1" name="langDate1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border rounded p-3">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="langTest2">시험명</label>
+                                    <input type="text" class="form-control" id="langTest2" name="langTest2"
+                                           placeholder="예) OPIc">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="langScore2">점수/등급</label>
+                                    <input type="text" class="form-control" id="langScore2" name="langScore2"
+                                           placeholder="예) IM2">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="langDate2">취득일</label>
+                                    <input type="month" class="form-control" id="langDate2" name="langDate2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 핵심 역량 / 타임라인 요약 / 자기소개 -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-stream mr-1"></i> 경력 · 활동 요약 & 자기소개
+                        </h6>
+                        <span class="small text-gray-500">history.html에 표시될 주요 내용입니다.</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-section-title">핵심 역량 키워드</div>
+                        <div class="form-section-sub">
+                            본인을 잘 나타낼 수 있는 키워드를 쉼표(,)로 구분해 입력해주세요.
+                        </div>
+                        <div class="form-group">
+                            <label for="coreSkills">핵심 역량</label>
+                            <input type="text" class="form-control" id="coreSkills" name="coreSkills"
+                                   placeholder="예) NCS 직업기초능력, 문제해결능력, 의사소통능력, 데이터 기반 보고">
+                        </div>
+
+                        <hr>
+
+                        <div class="form-section-title">경력 / 활동 타임라인 요약</div>
+                        <div class="form-section-sub">
+                            상세 경력은 추후 별도 화면으로 확장될 수 있으며, 여기서는 history.html에 노출할 대표 이력만 간단히 작성합니다.
+                        </div>
+                        <div class="form-group">
+                            <label for="timelineSummary1">최근 이력 요약 1</label>
+                            <textarea id="timelineSummary1" name="timelineSummary1" rows="2" class="form-control"
+                                      placeholder="예) ○○공단 일반행정 7급 채용 1차 서류합격 (2025.01) - 채용 공고 분석 및 맞춤형 자기소개서 작성으로 서류 전형 통과."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="timelineSummary2">최근 이력 요약 2</label>
+                            <textarea id="timelineSummary2" name="timelineSummary2" rows="2" class="form-control"
+                                      placeholder="예) △△공사 경영기획팀 인턴 (2023.07 ~ 2024.02) - 경영지표 집계, 회의자료 작성, 민원 응대 지원 경험 보유."></textarea>
+                        </div>
+
+                        <hr>
+
+                        <div class="form-section-title">자기소개 요약</div>
+                        <div class="form-section-sub">
+                            history.html 상단에 간략히 표시될 자기소개 요약입니다. 3~4문장 정도로 정리해주세요.
+                        </div>
+                        <div class="form-group mb-0">
+                            <label for="selfIntroSummary" class="required-label">요약 소개 글</label>
+                            <textarea id="selfIntroSummary" name="selfIntroSummary" rows="5" class="form-control"
+                                      placeholder="예) 공공기관 행정·경영 지원 직무를 목표로 NCS 직업기초능력과 직무 지식을 준비해 온 지원자입니다. 학생회와 행정 보조 경험을 통해 조직 내 의사소통과 자료 정리 역량을 쌓았으며, 채용 공고 분석을 기반으로 공고별 맞춤형 자기소개서를 작성하는 강점을 보유하고 있습니다."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 하단 버튼 -->
+                <div class="d-flex justify-content-between mb-4">
+                    <div>
+                        <button type="reset" class="btn btn-light border">
+                            <i class="fas fa-undo mr-1"></i> 초기화
+                        </button>
+                    </div>
+                    <div>
+                        <a th:href="@{/resumes}" class="btn btn-secondary mr-2">
+                            <i class="fas fa-times mr-1"></i> 취소
+                        </a>
+                        <button type="button" class="btn btn-primary"
+                                onclick="alert('샘플 페이지입니다. 실제 저장 기능은 연동 후 동작합니다.');">
+                            <i class="fas fa-save mr-1"></i> 이력 저장 (샘플)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+<th:block layout:fragment="script-extra">
+    <script>
+        // 이후 실제 저장 로직, 유효성 검사 등을 추가할 수 있는 영역입니다.
+        // 예: jQuery Validation, 입력 길이 체크, 안내 메시지 등
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,444 @@
+<!-- templates/pages/resume/history.html -->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/base}">
+<head>
+    <title layout:fragment="title">이력 사항 조회</title>
+
+    <!-- history 전용 CSS -->
+    <th:block layout:fragment="head-extra">
+        <style>
+            .resume-profile-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2.5rem;
+            }
+
+            .timeline {
+                position: relative;
+                padding-left: 1.5rem;
+            }
+
+            .timeline::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0.45rem;
+                width: 2px;
+                height: 100%;
+                background: #e3e6f0;
+            }
+
+            .timeline-item {
+                position: relative;
+                margin-bottom: 1.5rem;
+                padding-left: 1.5rem;
+            }
+
+            .timeline-item:last-child {
+                margin-bottom: 0;
+            }
+
+            .timeline-badge {
+                position: absolute;
+                left: -0.1rem;
+                top: 0.15rem;
+                width: 0.9rem;
+                height: 0.9rem;
+                border-radius: 50%;
+                background: #4e73df;
+                box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.15);
+            }
+
+            .timeline-year {
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: #4e73df;
+            }
+
+            .timeline-title {
+                font-size: 0.95rem;
+                font-weight: 600;
+                color: #4e4e4e;
+            }
+
+            .timeline-sub {
+                font-size: 0.85rem;
+                color: #858796;
+            }
+
+            .timeline-desc {
+                font-size: 0.8rem;
+                color: #6e707e;
+            }
+
+            @media (min-width: 992px) {
+                .resume-profile-card {
+                    height: 100%;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<section layout:fragment="content">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">이력 사항</h1>
+        <div>
+            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-outline-secondary shadow-sm mr-2 disabled"
+               tabindex="-1" aria-disabled="true">
+                <i class="fas fa-history fa-sm text-gray-400"></i> 이력 불러오기 (준비중)
+            </a>
+            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm disabled"
+               tabindex="-1" aria-disabled="true">
+                <i class="fas fa-edit fa-sm text-white-50"></i> 이력 수정 (준비중)
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 좌측 프로필 / 기본 정보 -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow resume-profile-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="resume-profile-avatar bg-primary text-white mr-3">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1 font-weight-bold text-gray-800">홍길동</h5>
+                            <div class="small text-gray-600 mb-1">
+                                공공기관 행정/경영 직무 지원자
+                            </div>
+                            <span class="badge badge-success">구직중</span>
+                            <span class="badge badge-info">신입 · 경력 2년 이내</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <h6 class="font-weight-bold text-gray-800 mb-2">
+                            <i class="fas fa-id-card-alt mr-1"></i> 기본 정보
+                        </h6>
+                        <div class="small text-gray-800">
+                            <div class="d-flex mb-1">
+                                <span class="text-gray-600" style="width: 80px;">생년월일</span>
+                                <span>1994-03-15</span>
+                            </div>
+                            <div class="d-flex mb-1">
+                                <span class="text-gray-600" style="width: 80px;">거주지</span>
+                                <span>서울특별시 마포구</span>
+                            </div>
+                            <div class="d-flex mb-1">
+                                <span class="text-gray-600" style="width: 80px;">이메일</span>
+                                <span>jobport.sample@jobport.kr</span>
+                            </div>
+                            <div class="d-flex">
+                                <span class="text-gray-600" style="width: 80px;">연락처</span>
+                                <span>010-1234-5678</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6 class="font-weight-bold text-gray-800 mb-2">
+                            <i class="fas fa-bullseye mr-1"></i> 희망 조건
+                        </h6>
+                        <div class="small text-gray-800">
+                            <div class="d-flex mb-1">
+                                <span class="text-gray-600" style="width: 80px;">희망직무</span>
+                                <span>행정·경영지원 / 채용·인사</span>
+                            </div>
+                            <div class="d-flex mb-1">
+                                <span class="text-gray-600" style="width: 80px;">근무지역</span>
+                                <span>수도권 (서울 · 경기 · 인천)</span>
+                            </div>
+                            <div class="d-flex">
+                                <span class="text-gray-600" style="width: 80px;">고용형태</span>
+                                <span>정규직, 무기계약직</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h6 class="font-weight-bold text-gray-800 mb-2">
+                            <i class="fas fa-star mr-1"></i> 핵심 역량
+                        </h6>
+                        <div class="small">
+                            <span class="badge badge-pill badge-primary mb-1">NCS 직업기초능력</span>
+                            <span class="badge badge-pill badge-primary mb-1">문제해결능력</span>
+                            <span class="badge badge-pill badge-primary mb-1">의사소통능력</span>
+                            <span class="badge badge-pill badge-primary mb-1">데이터 기반 보고</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 우측 요약 / 상세 -->
+        <div class="col-lg-8 mb-4">
+            <!-- 이력 요약 카드 -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-list-ul mr-1"></i> 이력 요약
+                    </h6>
+                    <span class="small text-gray-500">마지막 수정일 : 2025-02-10</span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                총 경력 (공백 포함)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">1년 6개월</div>
+                            <div class="small text-gray-600 mt-1">
+                                인턴·계약직 포함
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                지원 완료 공고
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8건</div>
+                            <div class="small text-gray-600 mt-1">
+                                JobPort에서 지원한 공고 기준
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                서류 통과율 (샘플)
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="h5 mb-0 font-weight-bold text-gray-800 mr-2">37.5%</div>
+                                <div class="progress flex-grow-1">
+                                    <div class="progress-bar" role="progressbar" style="width: 38%;"
+                                         aria-valuenow="38" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="small text-gray-600 mt-1">
+                                서류합격 3건 / 총 8건
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-2">
+                            자기소개 요약
+                        </div>
+                        <p class="mb-1 small text-gray-800">
+                            공공기관 행정·경영 지원 직무를 목표로 NCS 직업기초능력과 직무 지식 기반을 탄탄히 준비해 온 지원자입니다.
+                            대학교 재학 기간 동안 학생회 및 학과 행정 보조 경험을 통해 조직 내 의사소통과 자료 정리, 문서 관리 역량을
+                            기르며 실무에 가까운 경험을 쌓았습니다.
+                        </p>
+                        <p class="mb-0 small text-gray-800">
+                            특히, <span class="font-weight-bold text-primary">채용 공고 분석 → 필요 역량 정리 → 자기소개서 문항별 스토리 매핑</span>으로 이어지는
+                            체계적인 준비 방식을 통해 공고마다 맞춤형 이력서 및 자기소개서를 작성하고 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 학력 / 자격 / 어학 -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-graduation-cap mr-1"></i> 학력 · 자격 · 어학
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table mb-0">
+                        <tbody>
+                        <tr>
+                            <th style="width: 140px;" class="align-middle">
+                                학력
+                            </th>
+                            <td>
+                                <div class="small text-gray-800">
+                                    <div class="font-weight-bold">○○대학교 경영학과 졸업</div>
+                                    <div class="text-gray-600">2013.03 ~ 2019.02 (졸업)</div>
+                                    <div class="mt-1">
+                                        <span class="badge badge-light border text-gray-700">
+                                            평점 3.8 / 4.5
+                                        </span>
+                                        <span class="badge badge-light border text-gray-700">
+                                            전공 : 경영정보 / 인사조직
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="align-middle">
+                                자격증
+                            </th>
+                            <td>
+                                <div class="small text-gray-800">
+                                    <div class="mb-1">
+                                        <span class="font-weight-bold">사회조사분석사 2급</span>
+                                        <span class="text-gray-600 ml-2">2023.09 취득 · 한국산업인력공단</span>
+                                    </div>
+                                    <div class="mb-1">
+                                        <span class="font-weight-bold">컴퓨터활용능력 1급</span>
+                                        <span class="text-gray-600 ml-2">2022.12 취득 · 대한상공회의소</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-weight-bold">한국사능력검정시험 1급</span>
+                                        <span class="text-gray-600 ml-2">2021.06 취득 · 국사편찬위원회</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="align-middle">
+                                어학
+                            </th>
+                            <td>
+                                <div class="small text-gray-800">
+                                    <div class="mb-1">
+                                        <span class="font-weight-bold">영어</span>
+                                        <span class="text-gray-600 ml-2">TOEIC 830점 (2024.05)</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-weight-bold">기타</span>
+                                        <span class="text-gray-600 ml-2">OPIc IM2 (2023.11)</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 이력 타임라인 (학력/경력/지원 내역) -->
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-stream mr-1"></i> 이력 타임라인 (샘플)
+                    </h6>
+                    <div class="small text-gray-500">
+                        학력 · 경력 · 공공기관 지원 내역을 시간순으로 정리해 보여줍니다.
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <!-- 최근 지원 내역 -->
+                        <div class="timeline-item">
+                            <span class="timeline-badge"></span>
+                            <div class="timeline-year mb-1">2025. 01 ~ 현재</div>
+                            <div class="timeline-title">
+                                ○○공단 일반행정 7급 채용 1차 서류합격
+                                <span class="badge badge-success ml-1">서류합격</span>
+                            </div>
+                            <div class="timeline-sub">
+                                모집분야 : 행정직(일반) · 근무지 : 서울
+                            </div>
+                            <div class="timeline-desc mt-1">
+                                NCS 직업기초능력 모듈 학습 및 기출 분석을 바탕으로 공고 요건에 맞춘
+                                자기소개서를 작성하여 서류 전형을 통과했습니다. 필기 전형을 대비해
+                                JobPort 내 즐겨찾기 공고를 중심으로 모의 계획을 수립했습니다.
+                            </div>
+                        </div>
+
+                        <!-- 인턴/계약직 경력 -->
+                        <div class="timeline-item">
+                            <span class="timeline-badge"></span>
+                            <div class="timeline-year mb-1">2023. 07 ~ 2024. 02</div>
+                            <div class="timeline-title">
+                                △△공사 경영기획팀 인턴
+                                <span class="badge badge-secondary ml-1">인턴</span>
+                            </div>
+                            <div class="timeline-sub">
+                                주요 업무 : 내부 경영지표 집계, 회의자료 작성, 민원 응대 지원
+                            </div>
+                            <div class="timeline-desc mt-1">
+                                월별 부서 경영지표를 취합·정리해 엑셀 및 파워포인트로 시각화했으며,
+                                경영회의 자료 제작을 보조했습니다. 특히, 반복 서식을 표준화해 보고서
+                                작성 시간을 약 20% 단축한 경험이 있습니다.
+                            </div>
+                        </div>
+
+                        <!-- 공모전/대외활동 -->
+                        <div class="timeline-item">
+                            <span class="timeline-badge"></span>
+                            <div class="timeline-year mb-1">2022. 03 ~ 2022. 11</div>
+                            <div class="timeline-title">
+                                「공공데이터 활용 아이디어 공모전」 장려상
+                            </div>
+                            <div class="timeline-sub">
+                                팀장 · 공공기관 채용 공고 데이터 분석 및 서비스 기획
+                            </div>
+                            <div class="timeline-desc mt-1">
+                                공공기관 채용 공고 데이터를 수집·분석해 직무별 요구 역량과 지역별 채용
+                                트렌드를 시각화하는 웹 서비스 기획을 담당했습니다. 이 경험을 바탕으로
+                                JobPort 서비스 이용 시에도 공고 분석에 강점을 가지고 있습니다.
+                            </div>
+                        </div>
+
+                        <!-- 학부 시절 / 학회 활동 -->
+                        <div class="timeline-item">
+                            <span class="timeline-badge"></span>
+                            <div class="timeline-year mb-1">2019. 03 ~ 2021. 12</div>
+                            <div class="timeline-title">
+                                학과 행정 보조 및 경영학 학회 활동
+                            </div>
+                            <div class="timeline-sub">
+                                학사 행정 보조, 행사 기획, 팀 프로젝트 발표 다수 수행
+                            </div>
+                            <div class="timeline-desc mt-1">
+                                학과 사무실에서 시간제 행정 보조로 근무하며 문서 정리, 공지사항 게시,
+                                행사 지원 업무를 수행했습니다. 동시에 경영학 학회에서 팀 프로젝트를
+                                통해 발표 자료 제작과 발표 경험을 쌓았습니다.
+                            </div>
+                        </div>
+
+                        <!-- 대학 입학/졸업 -->
+                        <div class="timeline-item">
+                            <span class="timeline-badge"></span>
+                            <div class="timeline-year mb-1">2013. 03 ~ 2019. 02</div>
+                            <div class="timeline-title">
+                                ○○대학교 경영학과 재학 및 졸업
+                            </div>
+                            <div class="timeline-sub">
+                                경영학 전공 · 경영정보 / 인사조직 트랙
+                            </div>
+                            <div class="timeline-desc mt-1">
+                                회계, 재무, 인사, 조직, 데이터 분석 관련 과목을 수강하며 공공기관 및
+                                기업 전반에 대한 이해를 키웠습니다. 팀 프로젝트 위주의 수업을 통해
+                                협업과 역할 분담, 기한 내 결과 도출 역량을 강화했습니다.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<!-- history 전용 JS (현재는 없음) -->
+<th:block layout:fragment="script-extra">
+    <script>
+        // 추후 이력 편집/버튼 활성화 시 사용할 JS 영역
+        // 예: 이력 데이터 로딩, 모달 오픈 등
+    </script>
+</th:block>
+</body>
+</html>
