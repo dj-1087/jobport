@@ -19,7 +19,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/", "/login", "/oauth/**",
                                 "/css/**", "/js/**", "/img/**", "/vendor/**", "/favicon.ico",
-                                "/job-postings/**"
+                                "/recruitments/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

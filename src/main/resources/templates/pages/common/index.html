@@ -21,7 +21,7 @@
         <section th:replace="~{pages/statistic/charts/sample :: sampleChart}"></section>
     </div>
     <div class="row">
-        <section th:replace="~{fragments/recruitment/list :: listTable(${recruitments})}"></section>
+        <section th:replace="~{fragments/recruitment/list :: listTable(${recruitments}, ${page})}"></section>
     </div>
     <th:block th:replace="~{pages/statistic/charts/sample :: chartScripts}"></th:block>
 </section>

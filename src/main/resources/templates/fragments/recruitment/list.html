@@ -2,7 +2,7 @@
     <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
 </th:block>
 
-<div th:fragment="listTable(recruitments)" class="card shadow mb-4">
+<div th:fragment="listTable(recruitments, page)" class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">채용 공고 목록</h6>
     </div>
@@ -51,37 +51,87 @@
                 </tr>
                 </tbody>
             </table>
+            <div class="pagination justify-content-center mt-3">
+                <ul class="pagination"
+                    th:with="
+            start=${T(java.lang.Math).max(0, page.number - 5)},
+            end=${T(java.lang.Math).min(page.totalPages - 1, page.number + 4)}
+        ">
+
+                    <!-- 처음 -->
+                    <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{|/recruitments?page=0|}">처음</a>
+                    </li>
+
+                    <!-- 이전 -->
+                    <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{|/recruitments?page=${page.number - 1}|}">이전</a>
+                    </li>
+
+                    <!-- 앞쪽 ... -->
+                    <li class="page-item" th:if="${start > 0}">
+                        <span class="page-link">...</span>
+                    </li>
+
+                    <!-- 가운데 숫자들 (start ~ end 까지만) -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(start, end)}"
+                        th:classappend="${i == page.number} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{|/recruitments?page=${i}|}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+
+                    <!-- 뒤쪽 ... -->
+                    <li class="page-item" th:if="${end < page.totalPages - 1}">
+                        <span class="page-link">...</span>
+                    </li>
+
+                    <!-- 다음 -->
+                    <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{|/recruitments?page=${page.number + 1}|}">다음</a>
+                    </li>
+
+                    <!-- 마지막 -->
+                    <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{|/recruitments?page=${page.totalPages - 1}|}">마지막</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 <th:block th:fragment="script-extra">
     <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
     <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        $(document).ready(function() {
-            $('#dataTable').DataTable({
-                paging: true,          // 페이징 사용
-                searching: true,       // 검색창
-                lengthChange: true,    // 페이지 당 개수 선택
-                pageLength: 10,        // 기본 10개씩
-                ordering: true,        // 컬럼 정렬
-                language: {
-                    "lengthMenu": "_MENU_ 개씩 보기",
-                    "zeroRecords": "데이터가 없습니다.",
-                    "info": "총 _TOTAL_개 중 _START_ ~ _END_",
-                    "infoEmpty": "0개",
-                    "infoFiltered": "(총 _MAX_개에서 필터링됨)",
-                    "search": "검색 : ",
-                    "paginate": {
-                        "first": "처음",
-                        "last": "마지막",
-                        "next": "다음",
-                        "previous": "이전"
-                    }
-                }
-            });
-        });
-        /*]]>*/
-    </script>
+<!--    <script th:inline="javascript">-->
+<!--        /*<![CDATA[*/-->
+<!--        $(document).ready(function() {-->
+<!--            $('#dataTable').DataTable({-->
+<!--                paging: true,          // 페이징 사용-->
+<!--                searching: true,       // 검색창-->
+<!--                lengthChange: true,    // 페이지 당 개수 선택-->
+<!--                pageLength: 10,        // 기본 10개씩-->
+<!--                ordering: true,        // 컬럼 정렬-->
+<!--                language: {-->
+<!--                    "lengthMenu": "_MENU_ 개씩 보기",-->
+<!--                    "zeroRecords": "데이터가 없습니다.",-->
+<!--                    "info": "총 _TOTAL_개 중 _START_ ~ _END_",-->
+<!--                    "infoEmpty": "0개",-->
+<!--                    "infoFiltered": "(총 _MAX_개에서 필터링됨)",-->
+<!--                    "search": "검색 : ",-->
+<!--                    "paginate": {-->
+<!--                        "first": "처음",-->
+<!--                        "last": "마지막",-->
+<!--                        "next": "다음",-->
+<!--                        "previous": "이전"-->
+<!--                    }-->
+<!--                }-->
+<!--            });-->
+<!--        });-->
+<!--        /*]]>*/-->
+<!--    </script>-->
 </th:block>

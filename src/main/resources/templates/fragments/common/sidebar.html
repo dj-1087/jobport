@@ -29,8 +29,8 @@
         공공기관 채용공고 조회
     </div>
 
-    <li class="nav-item" th:classappend="${#strings.startsWith(currentUri, '/job-postings')} ? ' active'">
-        <a class="nav-link" th:href="@{/job-postings}">
+    <li class="nav-item" th:classappend="${#strings.startsWith(currentUri, '/recruitments')} ? ' active'">
+        <a class="nav-link" th:href="@{/recruitments}">
             <!--                <i class="fas fa-fw fa-chart-area"></i>-->
             <i class="fas fa-fw fa-list"></i>
             <span>전체 목록</span></a>
