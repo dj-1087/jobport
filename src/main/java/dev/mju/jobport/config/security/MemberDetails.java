@@ -1,6 +1,6 @@
 package dev.mju.jobport.config.security;
 
-import dev.mju.jobport.modules.members.domain.Member;
+import dev.mju.jobport.modules.resume.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

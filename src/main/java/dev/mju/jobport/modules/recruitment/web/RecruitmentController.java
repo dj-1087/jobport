@@ -34,10 +34,10 @@ public class RecruitmentController {
 
     @GetMapping("/{recruitmentId}")
     public String detail(
-            @PathVariable long jobPostingId,
+            @PathVariable long recruitmentId,
             Model model
     ) throws Exception {
-        Recruitment recruitment = recruitmentService.find(jobPostingId);
+        Recruitment recruitment = recruitmentService.find(recruitmentId);
 
         model.addAttribute("recruitment", recruitment);
         return "pages/recruitment/detail";

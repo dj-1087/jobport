@@ -20,7 +20,7 @@ public class SelectionStage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recruitment_id")
-    Recruitment recruitment;
+    private Recruitment recruitment;
 
     @Column(name = "apply_field")
     private String applyField;

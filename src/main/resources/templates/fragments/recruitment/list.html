@@ -22,7 +22,7 @@
                 <tbody>
 
                 <tr th:each="recruitment : ${recruitments}"
-                    th:onclick="|window.location.href='/job-postings/${recruitment.id}'|"
+                    th:onclick="|window.location.href='/recruitments/${recruitment.id}'|"
                     style="cursor:pointer;">
                     <td th:text="${recruitment.title}">채용제목</td>
                     <td th:text="${recruitment.institution.institutionName}">기관명</td>

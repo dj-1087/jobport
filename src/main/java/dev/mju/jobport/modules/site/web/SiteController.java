@@ -30,16 +30,4 @@ public class SiteController {
         return "pages/common/index";
     }
 
-
-    @GetMapping("/resumes/new")
-    public String resumeForm(Model model) {
-
-        return "pages/resume/new";
-    }
-
-    @GetMapping("/resumes")
-    public String resume(Model model) {
-
-        return "pages/resume/index";
-    }
 }

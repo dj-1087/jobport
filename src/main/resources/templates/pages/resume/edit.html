@@ -1,0 +1,1140 @@
+<!-- templates/pages/resume/edit.html -->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/base}">
+<head>
+    <title layout:fragment="title">이력 사항 등록</title>
+
+    <th:block layout:fragment="head-extra">
+        <!-- 커스텀 style 없이 Bootstrap4 + SB Admin 2 유틸리티만 사용 -->
+    </th:block>
+</head>
+<body>
+<section layout:fragment="content">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">이력 사항 등록</h1>
+            <div class="small text-gray-600 mt-1">
+                공공기관 지원을 위해 사용할 이력 정보를 입력해주세요. <span class="text-danger">*</span> 표시는 필수 입력 항목입니다.
+            </div>
+        </div>
+        <div>
+            <a th:href="@{/resumes}" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm mr-2">
+                <i class="fas fa-arrow-left fa-sm text-white-50"></i> 목록으로
+            </a>
+            <button type="submit" form="resumeForm"
+                    class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-save fa-sm text-white-50"></i> 저장
+            </button>
+        </div>
+    </div>
+
+    <!-- 이력 등록/수정 폼 -->
+    <form id="resumeForm"
+          th:action="@{/resumes}"
+          th:object="${member}"
+          method="post"
+          enctype="multipart/form-data">
+
+        <!-- CSRF -->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <div class="row">
+            <!-- 좌측: 기본 정보 / 우대사항(병역·장애 등) -->
+            <div class="col-lg-4 mb-4">
+
+                <!-- Member: 기본 정보 -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-id-card-alt mr-1"></i> 기본 정보 (Member)
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- member.id는 로그인 사용자와 매핑된 경우 hidden 처리 고려 -->
+                        <input type="hidden" th:field="*{id}"/>
+
+                        <div class="form-group">
+                            <label>
+                                이름 <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control"
+                                   th:field="*{name}"
+                                   placeholder="예) 홍길동"
+                                   required>
+                        </div>
+
+                        <!-- 프로필 이미지 업로드 + 미리보기 -->
+                        <div class="form-group mb-0">
+                            <label>프로필 이미지</label>
+
+                            <!-- 기존 이미지가 있을 경우 표시 -->
+                            <div class="mb-2">
+                                <img id="profileImagePreview"
+                                     th:src="*{profileImageSrc}"
+                                     th:classappend="*{profileImageSrc} != null ? ' d-block' : ' d-none'"
+                                     class="img-thumbnail mb-2"
+                                     style="max-height: 150px;"
+                                     alt="프로필 이미지 미리보기">
+                            </div>
+
+                            <!-- 실제 업로드 필드 (MultipartFile 용) -->
+                            <input type="file"
+                                   class="form-control-file"
+                                   id="profileImageFile"
+                                   name="profileImageFile"
+                                   accept="image/*">
+
+                            <!-- 기존 URL 유지용 hidden (수정 시 사용) -->
+                            <input type="hidden" th:field="*{profileImageSrc}"/>
+
+                            <div class="small text-muted mt-1">
+                                프로필 사진을 업로드하면 위에 미리보기가 표시됩니다. (jpg, png 등 이미지 파일)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 우측: 학력 / 경력 / 활동 / 연수 / 자격 / 어학 / 해외 / 포트폴리오 / 자기소개서 -->
+            <div class="col-lg-8 mb-4">
+
+                <!-- Education: 학력 -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-graduation-cap mr-1"></i> 학력 (Education)
+                        </h6>
+                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                id="btnAddEducation"
+                                data-add-block
+                                data-target="#educationContainer"
+                                data-prefix="educations"
+                                data-id-prefix="education">
+                            <i class="fas fa-plus mr-1"></i> 항목 추가
+                        </button>
+                    </div>
+                    <div class="card-body" id="educationContainer"
+                         data-prefix="educations"
+                         data-id-prefix="education">
+
+                        <!-- 학력이 하나도 없는 경우: 기본 1개 블록 -->
+                        <div class="entity-block border rounded bg-light p-3 mb-3"
+                             th:if="${#lists.isEmpty(member.educations)}">
+                            <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                <span class="entity-block-title small font-weight-bold text-primary">학력 1</span>
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        data-remove-block>
+                                    <i class="fas fa-minus"></i> 삭제
+                                </button>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label>학교 구분</label>
+                                    <select class="form-control"
+                                            th:field="*{educations[0].schoolType}">
+                                        <option value="">선택하세요</option>
+                                        <option value="HIGH">고등학교</option>
+                                        <option value="COLLEGE">전문대</option>
+                                        <option value="UNIV">대학교(4년제)</option>
+                                        <option value="GRAD">대학원</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>
+                                        학교명 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{educations[0].schoolName}"
+                                           placeholder="예) ○○대학교">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>
+                                        전공명 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{educations[0].majorName}"
+                                           placeholder="예) 경영학과">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label>입학년월</label>
+                                    <input type="month" class="form-control"
+                                           th:field="*{educations[0].entranceYM}">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>졸업년월</label>
+                                    <input type="month" class="form-control"
+                                           th:field="*{educations[0].graduationYM}">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>평점</label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{educations[0].grade}"
+                                           placeholder="예) 3.8">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>만점</label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{educations[0].gradeMax}"
+                                           placeholder="예) 4.5">
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label>상태/비고</label>
+                                <select class="form-control"
+                                        th:field="*{educations[0].status}">
+                                    <option value="">선택하세요</option>
+                                    <option value="재학">재학</option>
+                                    <option value="휴학">휴학</option>
+                                    <option value="졸업">졸업</option>
+                                    <option value="졸업예정">졸업예정</option>
+                                    <option value="중퇴">중퇴</option>
+                                    <option value="수료">수료</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 기존 학력이 있는 경우: 전체 리스트 렌더링 -->
+                        <div class="entity-block border rounded bg-light p-3 mb-3"
+                             th:each="edu, stat : *{educations}"
+                             th:if="${!#lists.isEmpty(member.educations)}">
+                            <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                <span class="entity-block-title small font-weight-bold text-primary"
+                                      th:text="|학력 ${stat.index + 1}|">학력 1</span>
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        data-remove-block>
+                                    <i class="fas fa-minus"></i> 삭제
+                                </button>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label>학교 구분</label>
+                                    <select class="form-control"
+                                            th:field="*{educations[__${stat.index}__].schoolType}">
+                                        <option value="">선택하세요</option>
+                                        <option value="HIGH">고등학교</option>
+                                        <option value="COLLEGE">전문대</option>
+                                        <option value="UNIV">대학교(4년제)</option>
+                                        <option value="GRAD">대학원</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>
+                                        학교명 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{educations[__${stat.index}__].schoolName}"
+                                           placeholder="예) ○○대학교">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>
+                                        전공명 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{educations[__${stat.index}__].majorName}"
+                                           placeholder="예) 경영학과">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label>입학년월</label>
+                                    <input type="month" class="form-control"
+                                           th:field="*{educations[__${stat.index}__].entranceYM}">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>졸업년월</label>
+                                    <input type="month" class="form-control"
+                                           th:field="*{educations[__${stat.index}__].graduationYM}">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>평점</label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{educations[__${stat.index}__].grade}"
+                                           placeholder="예) 3.8">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>만점</label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{educations[__${stat.index}__].gradeMax}"
+                                           placeholder="예) 4.5">
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label>상태/비고</label>
+                                <select class="form-control"
+                                        th:field="*{educations[__${stat.index}__].status}">
+                                    <option value="">선택하세요</option>
+                                    <option value="재학">재학</option>
+                                    <option value="휴학">휴학</option>
+                                    <option value="졸업">졸업</option>
+                                    <option value="졸업예정">졸업예정</option>
+                                    <option value="중퇴">중퇴</option>
+                                    <option value="수료">수료</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Career: 경력 -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-briefcase mr-1"></i> 경력 (Career)
+                        </h6>
+                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                id="btnAddCareer"
+                                data-add-block
+                                data-target="#careerContainer"
+                                data-prefix="careers"
+                                data-id-prefix="career">
+                            <i class="fas fa-plus mr-1"></i> 항목 추가
+                        </button>
+                    </div>
+                    <div class="card-body" id="careerContainer"
+                         data-prefix="careers"
+                         data-id-prefix="career">
+
+                        <!-- 경력 없는 경우 -->
+                        <div class="entity-block border rounded bg-light p-3 mb-3"
+                             th:if="${#lists.isEmpty(member.careers)}">
+                            <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                <span class="entity-block-title small font-weight-bold text-primary">경력 1</span>
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        data-remove-block>
+                                    <i class="fas fa-minus"></i> 삭제
+                                </button>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>
+                                        회사/기관명 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{careers[0].companyName}"
+                                           placeholder="예) ○○공사 경영기획팀">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>고용 형태</label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{careers[0].employmentType}"
+                                           placeholder="예) 인턴, 계약직, 정규직">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>직무/직책</label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{careers[0].positionTitle}"
+                                           placeholder="예) 경영기획 인턴">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label>입사일</label>
+                                    <input type="date" class="form-control"
+                                           th:field="*{careers[0].startDate}">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>퇴사일</label>
+                                    <input type="date" class="form-control"
+                                           th:field="*{careers[0].endDate}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>담당 업무 요약</label>
+                                    <textarea rows="2" class="form-control"
+                                              th:field="*{careers[0].responsibilities}"
+                                              placeholder="예) 경영지표 집계, 회의자료 작성, 민원 응대 지원 등"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 경력 있는 경우 -->
+                        <div class="entity-block border rounded bg-light p-3 mb-3"
+                             th:each="career, stat : *{careers}"
+                             th:if="${!#lists.isEmpty(member.careers)}">
+                            <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                <span class="entity-block-title small font-weight-bold text-primary"
+                                      th:text="|경력 ${stat.index + 1}|">경력 1</span>
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        data-remove-block>
+                                    <i class="fas fa-minus"></i> 삭제
+                                </button>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>
+                                        회사/기관명 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{careers[__${stat.index}__].companyName}"
+                                           placeholder="예) ○○공사 경영기획팀">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>고용 형태</label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{careers[__${stat.index}__].employmentType}"
+                                           placeholder="예) 인턴, 계약직, 정규직">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>직무/직책</label>
+                                    <input type="text" class="form-control"
+                                           th:field="*{careers[__${stat.index}__].positionTitle}"
+                                           placeholder="예) 경영기획 인턴">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label>입사일</label>
+                                    <input type="date" class="form-control"
+                                           th:field="*{careers[__${stat.index}__].startDate}">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>퇴사일</label>
+                                    <input type="date" class="form-control"
+                                           th:field="*{careers[__${stat.index}__].endDate}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>담당 업무 요약</label>
+                                    <textarea rows="2" class="form-control"
+                                              th:field="*{careers[__${stat.index}__].responsibilities}"
+                                              placeholder="예) 경영지표 집계, 회의자료 작성, 민원 응대 지원 등"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity & Training: 대외활동 / 교육·연수 -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-users mr-1"></i> 대외활동 (Activity) & 교육·연수 (Training)
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- Activity -->
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="text-primary text-uppercase small font-weight-bold mb-2">
+                                    대외활동 (Activity)
+                                </div>
+                                <div class="small text-muted mb-3">
+                                    동아리, 학생회, 봉사활동, 공모전, 인턴 외 활동 등을 입력하세요.
+                                </div>
+                            </div>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    id="btnAddActivity"
+                                    data-add-block
+                                    data-target="#activityContainer"
+                                    data-prefix="activities"
+                                    data-id-prefix="activity">
+                                <i class="fas fa-plus mr-1"></i> 항목 추가
+                            </button>
+                        </div>
+
+                        <div id="activityContainer"
+                             data-prefix="activities"
+                             data-id-prefix="activity">
+
+                            <!-- 활동 없음 -->
+                            <div class="entity-block border rounded bg-light p-3 mb-3"
+                                 th:if="${#lists.isEmpty(member.activities)}">
+                                <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                    <span class="entity-block-title small font-weight-bold text-primary">활동 1</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            data-remove-block>
+                                        <i class="fas fa-minus"></i> 삭제
+                                    </button>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label>활동 유형</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{activities[0].activityType}"
+                                               placeholder="예) 학생회, 동아리, 봉사활동">
+                                    </div>
+                                    <div class="form-group col-md-8">
+                                        <label>기관/조직명</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{activities[0].organizationName}"
+                                               placeholder="예) ○○대학교 총학생회, ○○복지관">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        <label>시작월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{activities[0].startMonth}">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>종료월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{activities[0].endMonth}">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>주요 내용</label>
+                                        <textarea rows="2" class="form-control"
+                                                  th:field="*{activities[0].description}"
+                                                  placeholder="예) 기획, 행사 운영, 예산 집행, 발표 등 역할 중심으로 작성"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 활동 있음 -->
+                            <div class="entity-block border rounded bg-light p-3 mb-3"
+                                 th:each="activity, stat : *{activities}"
+                                 th:if="${!#lists.isEmpty(member.activities)}">
+                                <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                    <span class="entity-block-title small font-weight-bold text-primary"
+                                          th:text="|활동 ${stat.index + 1}|">활동 1</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            data-remove-block>
+                                        <i class="fas fa-minus"></i> 삭제
+                                    </button>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label>활동 유형</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{activities[__${stat.index}__].activityType}"
+                                               placeholder="예) 학생회, 동아리, 봉사활동">
+                                    </div>
+                                    <div class="form-group col-md-8">
+                                        <label>기관/조직명</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{activities[__${stat.index}__].organizationName}"
+                                               placeholder="예) ○○대학교 총학생회, ○○복지관">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        <label>시작월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{activities[__${stat.index}__].startMonth}">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>종료월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{activities[__${stat.index}__].endMonth}">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>주요 내용</label>
+                                        <textarea rows="2" class="form-control"
+                                                  th:field="*{activities[__${stat.index}__].description}"
+                                                  placeholder="예) 기획, 행사 운영, 예산 집행, 발표 등 역할 중심으로 작성"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Training -->
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <div>
+                                <div class="text-primary text-uppercase small font-weight-bold mb-2">
+                                    교육 · 연수 (Training)
+                                </div>
+                                <div class="small text-muted mb-3">
+                                    직무 관련 교육, 부트캠프, 국비과정, 어학연수 등의 이력을 입력하세요.
+                                </div>
+                            </div>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    id="btnAddTraining"
+                                    data-add-block
+                                    data-target="#trainingContainer"
+                                    data-prefix="trainings"
+                                    data-id-prefix="training">
+                                <i class="fas fa-plus mr-1"></i> 항목 추가
+                            </button>
+                        </div>
+
+                        <div id="trainingContainer"
+                             data-prefix="trainings"
+                             data-id-prefix="training">
+
+                            <!-- 연수 없음 -->
+                            <div class="entity-block border rounded bg-light p-3 mb-0"
+                                 th:if="${#lists.isEmpty(member.trainings)}">
+                                <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                    <span class="entity-block-title small font-weight-bold text-primary">교육/연수 1</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            data-remove-block>
+                                        <i class="fas fa-minus"></i> 삭제
+                                    </button>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>교육/연수명</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{trainings[0].trainingName}"
+                                               placeholder="예) 공공데이터 분석 전문가 과정">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>교육기관명</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{trainings[0].institutionName}"
+                                               placeholder="예) ○○교육원, ○○대학교 평생교육원">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        <label>시작월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{trainings[0].startMonth}">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>종료월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{trainings[0].endMonth}">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>주요 내용</label>
+                                        <textarea rows="2" class="form-control"
+                                                  th:field="*{trainings[0].description}"
+                                                  placeholder="예) 수강 시간, 커리큘럼, 프로젝트 수행 등 요약"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 연수 있음 -->
+                            <div class="entity-block border rounded bg-light p-3 mb-0"
+                                 th:each="training, stat : *{trainings}"
+                                 th:if="${!#lists.isEmpty(member.trainings)}">
+                                <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                    <span class="entity-block-title small font-weight-bold text-primary"
+                                          th:text="|교육/연수 ${stat.index + 1}|">교육/연수 1</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            data-remove-block>
+                                        <i class="fas fa-minus"></i> 삭제
+                                    </button>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>교육/연수명</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{trainings[__${stat.index}__].trainingName}"
+                                               placeholder="예) 공공데이터 분석 전문가 과정">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>교육기관명</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{trainings[__${stat.index}__].institutionName}"
+                                               placeholder="예) ○○교육원, ○○대학교 평생교육원">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        <label>시작월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{trainings[__${stat.index}__].startMonth}">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>종료월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{trainings[__${stat.index}__].endMonth}">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>주요 내용</label>
+                                        <textarea rows="2" class="form-control"
+                                                  th:field="*{trainings[__${stat.index}__].description}"
+                                                  placeholder="예) 수강 시간, 커리큘럼, 프로젝트 수행 등 요약"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificate & LanguageScore -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-certificate mr-1"></i> 자격증 (Certificate) · 어학 (LanguageScore)
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- 자격증 -->
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="text-primary text-uppercase small font-weight-bold mb-2">
+                                    자격증 (Certificate)
+                                </div>
+                                <div class="small text-muted mb-3">
+                                    공고에서 요구하거나 우대하는 자격증 위주로 입력하세요.
+                                </div>
+                            </div>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    id="btnAddCertificate"
+                                    data-add-block
+                                    data-target="#certificateContainer"
+                                    data-prefix="certificates"
+                                    data-id-prefix="cert">
+                                <i class="fas fa-plus mr-1"></i> 항목 추가
+                            </button>
+                        </div>
+
+                        <div id="certificateContainer"
+                             data-prefix="certificates"
+                             data-id-prefix="cert">
+
+                            <!-- 자격증 없음 -->
+                            <div class="entity-block border rounded bg-light p-3 mb-3"
+                                 th:if="${#lists.isEmpty(member.certificates)}">
+                                <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                    <span class="entity-block-title small font-weight-bold text-primary">자격증 1</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            data-remove-block>
+                                        <i class="fas fa-minus"></i> 삭제
+                                    </button>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-5">
+                                        <label>자격증명</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{certificates[0].certificateName}"
+                                               placeholder="예) 사회조사분석사 2급">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>발행기관</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{certificates[0].issuer}"
+                                               placeholder="예) 한국산업인력공단">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>취득월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{certificates[0].acquiredMonth}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 자격증 있음 -->
+                            <div class="entity-block border rounded bg-light p-3 mb-3"
+                                 th:each="cert, stat : *{certificates}"
+                                 th:if="${!#lists.isEmpty(member.certificates)}">
+                                <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                    <span class="entity-block-title small font-weight-bold text-primary"
+                                          th:text="|자격증 ${stat.index + 1}|">자격증 1</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            data-remove-block>
+                                        <i class="fas fa-minus"></i> 삭제
+                                    </button>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-5">
+                                        <label>자격증명</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{certificates[__${stat.index}__].certificateName}"
+                                               placeholder="예) 사회조사분석사 2급">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>발행기관</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{certificates[__${stat.index}__].issuer}"
+                                               placeholder="예) 한국산업인력공단">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>취득월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{certificates[__${stat.index}__].acquiredMonth}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- 어학 -->
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <div class="text-primary text-uppercase small font-weight-bold mb-2">
+                                어학 (LanguageScore)
+                            </div>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    id="btnAddLanguageScore"
+                                    data-add-block
+                                    data-target="#languageScoreContainer"
+                                    data-prefix="languageScores"
+                                    data-id-prefix="lang">
+                                <i class="fas fa-plus mr-1"></i> 항목 추가
+                            </button>
+                        </div>
+
+                        <div id="languageScoreContainer"
+                             data-prefix="languageScores"
+                             data-id-prefix="lang">
+
+                            <!-- 어학 없음 -->
+                            <div class="entity-block border rounded bg-light p-3 mb-0"
+                                 th:if="${#lists.isEmpty(member.languageScores)}">
+                                <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                    <span class="entity-block-title small font-weight-bold text-primary">어학 성적 1</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            data-remove-block>
+                                        <i class="fas fa-minus"></i> 삭제
+                                    </button>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        <label>언어</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{languageScores[0].languageName}"
+                                               placeholder="예) 영어, 중국어">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>시험명</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{languageScores[0].examName}"
+                                               placeholder="예) TOEIC, OPIc, TEPS 등">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>점수/등급</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{languageScores[0].score}"
+                                               placeholder="예) 850점, IM2 등">
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label>취득일</label>
+                                        <input type="date" class="form-control"
+                                               th:field="*{languageScores[0].acquiredDate}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 어학 있음 -->
+                            <div class="entity-block border rounded bg-light p-3 mb-0"
+                                 th:each="langScore, stat : *{languageScores}"
+                                 th:if="${!#lists.isEmpty(member.languageScores)}">
+                                <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                    <span class="entity-block-title small font-weight-bold text-primary"
+                                          th:text="|어학 성적 ${stat.index + 1}|">어학 성적 1</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            data-remove-block>
+                                        <i class="fas fa-minus"></i> 삭제
+                                    </button>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        <label>언어</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{languageScores[__${stat.index}__].languageName}"
+                                               placeholder="예) 영어, 중국어">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>시험명</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{languageScores[__${stat.index}__].examName}"
+                                               placeholder="예) TOEIC, OPIc, TEPS 등">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>점수/등급</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{languageScores[__${stat.index}__].score}"
+                                               placeholder="예) 850점, IM2 등">
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label>취득일</label>
+                                        <input type="date" class="form-control"
+                                               th:field="*{languageScores[__${stat.index}__].acquiredDate}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OverseasExperience & (추후 포트폴리오/자기소개서 연계용) -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-globe-asia mr-1"></i> 해외 경험 · 포트폴리오 · 자기소개서
+                        </h6>
+                        <span class="small text-gray-500">history/자기소개서 화면에 함께 활용 가능합니다.</span>
+                    </div>
+                    <div class="card-body">
+                        <!-- OverseasExperience -->
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="text-primary text-uppercase small font-weight-bold mb-2">
+                                    해외 경험 (OverseasExperience)
+                                </div>
+                                <div class="small text-muted mb-3">
+                                    어학연수, 교환학생, 해외 인턴/근무 등의 이력을 입력하세요.
+                                </div>
+                            </div>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    id="btnAddOverseas"
+                                    data-add-block
+                                    data-target="#overseasContainer"
+                                    data-prefix="overseasExperiences"
+                                    data-id-prefix="overseas">
+                                <i class="fas fa-plus mr-1"></i> 항목 추가
+                            </button>
+                        </div>
+
+                        <div id="overseasContainer"
+                             data-prefix="overseasExperiences"
+                             data-id-prefix="overseas">
+
+                            <!-- 해외 경험 없음 -->
+                            <div class="entity-block border rounded bg-light p-3 mb-3"
+                                 th:if="${#lists.isEmpty(member.overseasExperiences)}">
+                                <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                    <span class="entity-block-title small font-weight-bold text-primary">해외 경험 1</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            data-remove-block>
+                                        <i class="fas fa-minus"></i> 삭제
+                                    </button>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label>국가</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{overseasExperiences[0].country}"
+                                               placeholder="예) 미국, 일본, 독일 등">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>시작월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{overseasExperiences[0].startMonth}">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>종료월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{overseasExperiences[0].endMonth}">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>주요 내용</label>
+                                        <textarea rows="2" class="form-control"
+                                                  th:field="*{overseasExperiences[0].description}"
+                                                  placeholder="예) 교환학생으로 전공 과목 수강, 프로젝트 수행, 현지 봉사활동 등"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 해외 경험 있음 -->
+                            <div class="entity-block border rounded bg-light p-3 mb-3"
+                                 th:each="over, stat : *{overseasExperiences}"
+                                 th:if="${!#lists.isEmpty(member.overseasExperiences)}">
+                                <div class="entity-block-header d-flex align-items-center justify-content-between mb-3">
+                                    <span class="entity-block-title small font-weight-bold text-primary"
+                                          th:text="|해외 경험 ${stat.index + 1}|">해외 경험 1</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            data-remove-block>
+                                        <i class="fas fa-minus"></i> 삭제
+                                    </button>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label>국가</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{overseasExperiences[__${stat.index}__].country}"
+                                               placeholder="예) 미국, 일본, 독일 등">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>시작월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{overseasExperiences[__${stat.index}__].startMonth}">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label>종료월</label>
+                                        <input type="month" class="form-control"
+                                               th:field="*{overseasExperiences[__${stat.index}__].endMonth}">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>주요 내용</label>
+                                        <textarea rows="2" class="form-control"
+                                                  th:field="*{overseasExperiences[__${stat.index}__].description}"
+                                                  placeholder="예) 교환학생으로 전공 과목 수강, 프로젝트 수행, 현지 봉사활동 등"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 하단 버튼 -->
+                <div class="d-flex justify-content-between mb-4">
+                    <div>
+                        <button type="reset" class="btn btn-light border">
+                            <i class="fas fa-undo mr-1"></i> 초기화
+                        </button>
+                    </div>
+                    <div>
+                        <a th:href="@{/resumes}" class="btn btn-secondary mr-2">
+                            <i class="fas fa-times mr-1"></i> 취소
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save mr-1"></i> 이력 저장
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+<th:block layout:fragment="script-extra">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addButtons = document.querySelectorAll('[data-add-block]');
+
+            // 항목 추가
+            addButtons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const targetSelector = btn.getAttribute('data-target');
+                    const prefix = btn.getAttribute('data-prefix');        // 예: educations, careers
+                    const idPrefix = btn.getAttribute('data-id-prefix');   // 예: education, career (지금은 name만 사용)
+                    const container = document.querySelector(targetSelector);
+
+                    if (!container) return;
+
+                    const blocks = container.querySelectorAll('.entity-block');
+                    if (blocks.length === 0) return;
+
+                    const lastBlock = blocks[blocks.length - 1];
+                    const newIndex = blocks.length; // 0부터 시작 → 다음 인덱스
+
+                    const newBlock = lastBlock.cloneNode(true);
+
+                    // 값 초기화
+                    newBlock.querySelectorAll('input, textarea, select').forEach(function (el) {
+                        if (el.type === 'checkbox' || el.type === 'radio') {
+                            el.checked = false;
+                        } else {
+                            el.value = '';
+                        }
+                    });
+
+                    // name 인덱스 변경 (Spring 바인딩)
+                    updateIndexes(newBlock, prefix, newIndex);
+
+                    // 타이틀 텍스트의 번호도 변경 (예: "학력 1" → "학력 2")
+                    const titleEl = newBlock.querySelector('.entity-block-title');
+                    if (titleEl) {
+                        const base = titleEl.textContent.replace(/\d+$/, '').trim();
+                        titleEl.textContent = base + ' ' + (newIndex + 1);
+                    }
+
+                    container.appendChild(newBlock);
+                });
+            });
+
+            // 항목 삭제 (이벤트 위임)
+            document.addEventListener('click', function (e) {
+                const btn = e.target.closest('[data-remove-block]');
+                if (!btn) return;
+
+                const block = btn.closest('.entity-block');
+                if (!block) return;
+
+                // data-prefix / data-id-prefix 를 가진 컨테이너 찾기
+                let container = block.parentElement;
+                while (container && !(container.dataset && container.dataset.prefix)) {
+                    container = container.parentElement;
+                }
+                if (!container) return;
+
+                const prefix = container.dataset.prefix;
+
+                const blocks = container.querySelectorAll('.entity-block');
+                if (blocks.length <= 1) {
+                    // 마지막 1개 남은 경우: 삭제 대신 내용만 초기화
+                    block.querySelectorAll('input, textarea, select').forEach(function (el) {
+                        if (el.type === 'checkbox' || el.type === 'radio') {
+                            el.checked = false;
+                        } else {
+                            el.value = '';
+                        }
+                    });
+                    return;
+                }
+
+                // 블록 삭제
+                block.remove();
+
+                // 나머지 블록 인덱스 재정렬
+                reindexBlocks(container, prefix);
+            });
+
+            function updateIndexes(block, prefix, index) {
+                if (!prefix) return;
+
+                // name 속성만 인덱스 변경 (예: educations[0].schoolName → educations[3].schoolName)
+                const nameRegex = new RegExp(prefix + '\\[(\\d+)\\]', 'g');
+                block.querySelectorAll('[name]').forEach(function (el) {
+                    if (!el.name) return;
+                    el.name = el.name.replace(nameRegex, prefix + '[' + index + ']');
+                });
+            }
+
+            function reindexBlocks(container, prefix) {
+                const blocks = container.querySelectorAll('.entity-block');
+                const nameRegex = new RegExp(prefix + '\\[(\\d+)\\]', 'g');
+
+                blocks.forEach(function (block, idx) {
+                    // name 재정렬
+                    block.querySelectorAll('[name]').forEach(function (el) {
+                        if (!el.name) return;
+                        el.name = el.name.replace(nameRegex, prefix + '[' + idx + ']');
+                    });
+
+                    // 타이틀 번호 재정렬
+                    const titleEl = block.querySelector('.entity-block-title');
+                    if (titleEl) {
+                        const base = titleEl.textContent.replace(/\d+$/, '').trim();
+                        titleEl.textContent = base + ' ' + (idx + 1);
+                    }
+                });
+            }
+
+            // 프로필 이미지 미리보기
+            const profileImageFileInput = document.getElementById('profileImageFile');
+            const profileImagePreview = document.getElementById('profileImagePreview');
+
+            if (profileImageFileInput) {
+                profileImageFileInput.addEventListener('change', function () {
+                    const file = this.files && this.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        if (profileImagePreview) {
+                            profileImagePreview.src = e.target.result;
+                            profileImagePreview.classList.remove('d-none');
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+    </script>
+</th:block>
+</body>
+</html>

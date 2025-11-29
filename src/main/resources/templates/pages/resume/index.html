@@ -1,4 +1,4 @@
-<!-- templates/pages/resume/history.html -->
+<!-- templates/pages/resume/show.html -->
 <!DOCTYPE html>
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
@@ -7,437 +7,513 @@
 <head>
     <title layout:fragment="title">이력 사항 조회</title>
 
-    <!-- history 전용 CSS -->
     <th:block layout:fragment="head-extra">
-        <style>
-            .resume-profile-avatar {
-                width: 80px;
-                height: 80px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 2.5rem;
-            }
-
-            .timeline {
-                position: relative;
-                padding-left: 1.5rem;
-            }
-
-            .timeline::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0.45rem;
-                width: 2px;
-                height: 100%;
-                background: #e3e6f0;
-            }
-
-            .timeline-item {
-                position: relative;
-                margin-bottom: 1.5rem;
-                padding-left: 1.5rem;
-            }
-
-            .timeline-item:last-child {
-                margin-bottom: 0;
-            }
-
-            .timeline-badge {
-                position: absolute;
-                left: -0.1rem;
-                top: 0.15rem;
-                width: 0.9rem;
-                height: 0.9rem;
-                border-radius: 50%;
-                background: #4e73df;
-                box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.15);
-            }
-
-            .timeline-year {
-                font-size: 0.85rem;
-                font-weight: 700;
-                color: #4e73df;
-            }
-
-            .timeline-title {
-                font-size: 0.95rem;
-                font-weight: 600;
-                color: #4e4e4e;
-            }
-
-            .timeline-sub {
-                font-size: 0.85rem;
-                color: #858796;
-            }
-
-            .timeline-desc {
-                font-size: 0.8rem;
-                color: #6e707e;
-            }
-
-            @media (min-width: 992px) {
-                .resume-profile-card {
-                    height: 100%;
-                }
-            }
-        </style>
+        <!-- 커스텀 style 없이 Bootstrap4 + SB Admin 2 유틸리티만 사용 -->
     </th:block>
 </head>
 <body>
-<section layout:fragment="content">
+<section layout:fragment="content" th:object="${member}">
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">이력 사항</h1>
         <div>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-outline-secondary shadow-sm mr-2 disabled"
-               tabindex="-1" aria-disabled="true">
-                <i class="fas fa-history fa-sm text-gray-400"></i> 이력 불러오기 (준비중)
+            <h1 class="h3 mb-0 text-gray-800">이력 사항 조회</h1>
+            <div class="small text-gray-600 mt-1">
+                공공기관 지원을 위해 등록한 이력 정보를 확인하는 페이지입니다.
+            </div>
+        </div>
+        <div>
+            <a th:href="@{/resumes}" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm mr-2">
+                <i class="fas fa-arrow-left fa-sm text-white-50"></i> 목록으로
             </a>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm disabled"
-               tabindex="-1" aria-disabled="true">
-                <i class="fas fa-edit fa-sm text-white-50"></i> 이력 수정 (준비중)
+            <!-- 수정 페이지가 있을 경우 -->
+            <a th:href="@{/resumes/edit}"
+               class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm mr-2">
+                <i class="fas fa-edit fa-sm text-white-50"></i> 이력 수정
             </a>
+            <button type="button"
+                    class="d-none d-sm-inline-block btn btn-sm btn-outline-info shadow-sm"
+                    onclick="window.print()">
+                <i class="fas fa-print fa-sm text-info"></i> 인쇄
+            </button>
         </div>
     </div>
 
     <div class="row">
-        <!-- 좌측 프로필 / 기본 정보 -->
+        <!-- 좌측: 기본 정보 / 프로필 -->
         <div class="col-lg-4 mb-4">
-            <div class="card shadow resume-profile-card">
+
+            <!-- Member: 기본 정보 -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-id-card-alt mr-1"></i> 기본 정보 (Member)
+                    </h6>
+                    <span class="badge badge-light small" th:text="*{id}">MEMBER_ID</span>
+                </div>
                 <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="resume-profile-avatar bg-primary text-white mr-3">
-                            <i class="fas fa-user-tie"></i>
+                    <!-- 프로필 이미지 -->
+                    <div class="text-center mb-3">
+                        <img th:if="*{profileImageSrc != null}"
+                             th:src="*{profileImageSrc}"
+                             class="img-profile mb-2"
+                             style="width: 180px; height: 240px; object-fit: cover;"
+                             alt="프로필 이미지">
+                        <div th:if="*{profileImageSrc == null}"
+                             class="d-inline-block rounded-circle bg-light mb-2"
+                             style="width: 140px; height: 140px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fas fa-user text-gray-400" style="font-size: 3rem;"></i>
                         </div>
-                        <div>
-                            <h5 class="mb-1 font-weight-bold text-gray-800">홍길동</h5>
-                            <div class="small text-gray-600 mb-1">
-                                공공기관 행정/경영 직무 지원자
-                            </div>
-                            <span class="badge badge-success">구직중</span>
-                            <span class="badge badge-info">신입 · 경력 2년 이내</span>
+                        <div class="small text-muted">
+                            등록된 프로필 이미지가 없을 경우 기본 아이콘이 표시됩니다.
                         </div>
                     </div>
 
                     <hr>
 
-                    <div class="mb-3">
-                        <h6 class="font-weight-bold text-gray-800 mb-2">
-                            <i class="fas fa-id-card-alt mr-1"></i> 기본 정보
-                        </h6>
-                        <div class="small text-gray-800">
-                            <div class="d-flex mb-1">
-                                <span class="text-gray-600" style="width: 80px;">생년월일</span>
-                                <span>1994-03-15</span>
-                            </div>
-                            <div class="d-flex mb-1">
-                                <span class="text-gray-600" style="width: 80px;">거주지</span>
-                                <span>서울특별시 마포구</span>
-                            </div>
-                            <div class="d-flex mb-1">
-                                <span class="text-gray-600" style="width: 80px;">이메일</span>
-                                <span>jobport.sample@jobport.kr</span>
-                            </div>
-                            <div class="d-flex">
-                                <span class="text-gray-600" style="width: 80px;">연락처</span>
-                                <span>010-1234-5678</span>
-                            </div>
-                        </div>
+                    <div class="mb-2">
+                        <div class="small text-gray-600">이름</div>
+                        <div class="font-weight-bold" th:text="*{name} ?: '-'">홍길동</div>
                     </div>
 
-                    <div class="mb-3">
-                        <h6 class="font-weight-bold text-gray-800 mb-2">
-                            <i class="fas fa-bullseye mr-1"></i> 희망 조건
-                        </h6>
-                        <div class="small text-gray-800">
-                            <div class="d-flex mb-1">
-                                <span class="text-gray-600" style="width: 80px;">희망직무</span>
-                                <span>행정·경영지원 / 채용·인사</span>
-                            </div>
-                            <div class="d-flex mb-1">
-                                <span class="text-gray-600" style="width: 80px;">근무지역</span>
-                                <span>수도권 (서울 · 경기 · 인천)</span>
-                            </div>
-                            <div class="d-flex">
-                                <span class="text-gray-600" style="width: 80px;">고용형태</span>
-                                <span>정규직, 무기계약직</span>
-                            </div>
-                        </div>
+                    <!-- 필요 시 추가 기본 정보 필드 확장 -->
+                    <!--
+                    <div class="mb-2">
+                        <div class="small text-gray-600">이메일</div>
+                        <div class="font-weight-bold" th:text="*{email} ?: '-'">email@example.com</div>
                     </div>
-
-                    <div>
-                        <h6 class="font-weight-bold text-gray-800 mb-2">
-                            <i class="fas fa-star mr-1"></i> 핵심 역량
-                        </h6>
-                        <div class="small">
-                            <span class="badge badge-pill badge-primary mb-1">NCS 직업기초능력</span>
-                            <span class="badge badge-pill badge-primary mb-1">문제해결능력</span>
-                            <span class="badge badge-pill badge-primary mb-1">의사소통능력</span>
-                            <span class="badge badge-pill badge-primary mb-1">데이터 기반 보고</span>
-                        </div>
-                    </div>
+                    -->
                 </div>
             </div>
         </div>
 
-        <!-- 우측 요약 / 상세 -->
+        <!-- 우측: 학력 / 경력 / 활동 / 연수 / 자격 / 어학 / 해외 -->
         <div class="col-lg-8 mb-4">
-            <!-- 이력 요약 카드 -->
+
+            <!-- Education: 학력 -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-list-ul mr-1"></i> 이력 요약
+                        <i class="fas fa-graduation-cap mr-1"></i> 학력 (Education)
                     </h6>
-                    <span class="small text-gray-500">마지막 수정일 : 2025-02-10</span>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-4 mb-3 mb-md-0">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                총 경력 (공백 포함)
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">1년 6개월</div>
-                            <div class="small text-gray-600 mt-1">
-                                인턴·계약직 포함
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3 mb-md-0">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                지원 완료 공고
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">8건</div>
-                            <div class="small text-gray-600 mt-1">
-                                JobPort에서 지원한 공고 기준
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                서류 통과율 (샘플)
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <div class="h5 mb-0 font-weight-bold text-gray-800 mr-2">37.5%</div>
-                                <div class="progress flex-grow-1">
-                                    <div class="progress-bar" role="progressbar" style="width: 38%;"
-                                         aria-valuenow="38" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="small text-gray-600 mt-1">
-                                서류합격 3건 / 총 8건
-                            </div>
-                        </div>
+                    <div th:if="*{educations == null or #lists.isEmpty(educations)}"
+                         class="text-muted small">
+                        등록된 학력 정보가 없습니다.
                     </div>
 
-                    <hr>
-
-                    <div>
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-2">
-                            자기소개 요약
+                    <div th:each="edu, stat : *{educations}"
+                         class="border rounded bg-light p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="entity-block-title small font-weight-bold text-primary">
+                                학력 [[${stat.index + 1}]]
+                            </span>
+                            <span class="badge badge-pill badge-secondary"
+                                  th:switch="${edu.status}">
+                                <span th:case="'재학'" th:text="${edu.status}">재학</span>
+                                <span th:case="'휴학'" th:text="${edu.status}">휴학</span>
+                                <span th:case="'졸업'" th:text="${edu.status}">졸업</span>
+                                <span th:case="*"
+                                      th:text="${edu.status} ?: '상태 미입력'">상태 미입력</span>
+                            </span>
                         </div>
-                        <p class="mb-1 small text-gray-800">
-                            공공기관 행정·경영 지원 직무를 목표로 NCS 직업기초능력과 직무 지식 기반을 탄탄히 준비해 온 지원자입니다.
-                            대학교 재학 기간 동안 학생회 및 학과 행정 보조 경험을 통해 조직 내 의사소통과 자료 정리, 문서 관리 역량을
-                            기르며 실무에 가까운 경험을 쌓았습니다.
-                        </p>
-                        <p class="mb-0 small text-gray-800">
-                            특히, <span class="font-weight-bold text-primary">채용 공고 분석 → 필요 역량 정리 → 자기소개서 문항별 스토리 매핑</span>으로 이어지는
-                            체계적인 준비 방식을 통해 공고마다 맞춤형 이력서 및 자기소개서를 작성하고 있습니다.
-                        </p>
+
+                        <div class="row small">
+                            <div class="col-md-4 mb-1">
+                                <div class="text-gray-600">학교 구분</div>
+                                <div th:switch="${edu.schoolType}">
+                                    <span th:case="'HIGH'">고등학교</span>
+                                    <span th:case="'COLLEGE'">전문대</span>
+                                    <span th:case="'UNIV'">대학교(4년제)</span>
+                                    <span th:case="'GRAD'">대학원</span>
+                                    <span th:case="*"
+                                          th:text="${edu.schoolType} ?: '-'">-</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-1">
+                                <div class="text-gray-600">학교명</div>
+                                <div class="font-weight-bold"
+                                     th:text="${edu.schoolName} ?: '-'">○○대학교</div>
+                            </div>
+                            <div class="col-md-4 mb-1">
+                                <div class="text-gray-600">전공명</div>
+                                <div class="font-weight-bold"
+                                     th:text="${edu.majorName} ?: '-'">경영학과</div>
+                            </div>
+                        </div>
+
+                        <div class="row small mt-2">
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">입학년월</div>
+                                <div th:text="${edu.entranceYM} ?: '-'">2020</div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">졸업년월</div>
+                                <div th:text="${edu.graduationYM} ?: '-'">2024</div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">평점</div>
+                                <div th:text="${edu.grade} ?: '-'">3.8</div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">만점</div>
+                                <div th:text="${edu.gradeMax} ?: '-'">4.5</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 학력 / 자격 / 어학 -->
+            <!-- Career: 경력 -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-briefcase mr-1"></i> 경력 (Career)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div th:if="*{careers == null or #lists.isEmpty(careers)}"
+                         class="text-muted small">
+                        등록된 경력 정보가 없습니다.
+                    </div>
+
+                    <div th:each="career, stat : *{careers}"
+                         class="border rounded bg-light p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="entity-block-title small font-weight-bold text-primary">
+                                경력 [[${stat.index + 1}]]
+                            </span>
+                        </div>
+
+                        <div class="row small">
+                            <div class="col-md-6 mb-1">
+                                <div class="text-gray-600">회사/기관명</div>
+                                <div class="font-weight-bold"
+                                     th:text="${career.companyName} ?: '-'">○○공사 경영기획팀</div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">고용 형태</div>
+                                <div th:text="${career.employmentType} ?: '-'">정규직</div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">직무/직책</div>
+                                <div th:text="${career.positionTitle} ?: '-'">경영기획 인턴</div>
+                            </div>
+                        </div>
+
+                        <div class="row small mt-2">
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">입사일</div>
+                                <div th:text="${#temporals.format(career.startDate, 'yyyy-MM-dd')}"
+                                     th:if="${career.startDate != null}">2024-01-01</div>
+                                <div th:if="${career.startDate == null}">-</div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">퇴사일</div>
+                                <div th:text="${#temporals.format(career.endDate, 'yyyy-MM-dd')}"
+                                     th:if="${career.endDate != null}">2024-06-30</div>
+                                <div th:if="${career.endDate == null}">-</div>
+                            </div>
+                            <div class="col-md-6 mb-1">
+                                <div class="text-gray-600">담당 업무 요약</div>
+                                <div th:text="${career.responsibilities} ?: '-'">
+                                    경영지표 집계, 회의자료 작성, 민원 응대 지원 등
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity & Training -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-graduation-cap mr-1"></i> 학력 · 자격 · 어학
+                        <i class="fas fa-users mr-1"></i> 대외활동 (Activity) & 교육·연수 (Training)
                     </h6>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table mb-0">
-                        <tbody>
-                        <tr>
-                            <th style="width: 140px;" class="align-middle">
-                                학력
-                            </th>
-                            <td>
-                                <div class="small text-gray-800">
-                                    <div class="font-weight-bold">○○대학교 경영학과 졸업</div>
-                                    <div class="text-gray-600">2013.03 ~ 2019.02 (졸업)</div>
-                                    <div class="mt-1">
-                                        <span class="badge badge-light border text-gray-700">
-                                            평점 3.8 / 4.5
-                                        </span>
-                                        <span class="badge badge-light border text-gray-700">
-                                            전공 : 경영정보 / 인사조직
-                                        </span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="align-middle">
-                                자격증
-                            </th>
-                            <td>
-                                <div class="small text-gray-800">
-                                    <div class="mb-1">
-                                        <span class="font-weight-bold">사회조사분석사 2급</span>
-                                        <span class="text-gray-600 ml-2">2023.09 취득 · 한국산업인력공단</span>
-                                    </div>
-                                    <div class="mb-1">
-                                        <span class="font-weight-bold">컴퓨터활용능력 1급</span>
-                                        <span class="text-gray-600 ml-2">2022.12 취득 · 대한상공회의소</span>
-                                    </div>
-                                    <div>
-                                        <span class="font-weight-bold">한국사능력검정시험 1급</span>
-                                        <span class="text-gray-600 ml-2">2021.06 취득 · 국사편찬위원회</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="align-middle">
-                                어학
-                            </th>
-                            <td>
-                                <div class="small text-gray-800">
-                                    <div class="mb-1">
-                                        <span class="font-weight-bold">영어</span>
-                                        <span class="text-gray-600 ml-2">TOEIC 830점 (2024.05)</span>
-                                    </div>
-                                    <div>
-                                        <span class="font-weight-bold">기타</span>
-                                        <span class="text-gray-600 ml-2">OPIc IM2 (2023.11)</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- 이력 타임라인 (학력/경력/지원 내역) -->
-    <div class="row">
-        <div class="col-lg-12 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3 d-flex align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-stream mr-1"></i> 이력 타임라인 (샘플)
-                    </h6>
-                    <div class="small text-gray-500">
-                        학력 · 경력 · 공공기관 지원 내역을 시간순으로 정리해 보여줍니다.
-                    </div>
                 </div>
                 <div class="card-body">
-                    <div class="timeline">
-                        <!-- 최근 지원 내역 -->
-                        <div class="timeline-item">
-                            <span class="timeline-badge"></span>
-                            <div class="timeline-year mb-1">2025. 01 ~ 현재</div>
-                            <div class="timeline-title">
-                                ○○공단 일반행정 7급 채용 1차 서류합격
-                                <span class="badge badge-success ml-1">서류합격</span>
+                    <!-- Activity -->
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div>
+                            <div class="text-primary text-uppercase small font-weight-bold mb-1">
+                                대외활동 (Activity)
                             </div>
-                            <div class="timeline-sub">
-                                모집분야 : 행정직(일반) · 근무지 : 서울
-                            </div>
-                            <div class="timeline-desc mt-1">
-                                NCS 직업기초능력 모듈 학습 및 기출 분석을 바탕으로 공고 요건에 맞춘
-                                자기소개서를 작성하여 서류 전형을 통과했습니다. 필기 전형을 대비해
-                                JobPort 내 즐겨찾기 공고를 중심으로 모의 계획을 수립했습니다.
+                            <div class="small text-muted">
+                                동아리, 학생회, 봉사활동, 공모전, 인턴 외 활동.
                             </div>
                         </div>
-
-                        <!-- 인턴/계약직 경력 -->
-                        <div class="timeline-item">
-                            <span class="timeline-badge"></span>
-                            <div class="timeline-year mb-1">2023. 07 ~ 2024. 02</div>
-                            <div class="timeline-title">
-                                △△공사 경영기획팀 인턴
-                                <span class="badge badge-secondary ml-1">인턴</span>
-                            </div>
-                            <div class="timeline-sub">
-                                주요 업무 : 내부 경영지표 집계, 회의자료 작성, 민원 응대 지원
-                            </div>
-                            <div class="timeline-desc mt-1">
-                                월별 부서 경영지표를 취합·정리해 엑셀 및 파워포인트로 시각화했으며,
-                                경영회의 자료 제작을 보조했습니다. 특히, 반복 서식을 표준화해 보고서
-                                작성 시간을 약 20% 단축한 경험이 있습니다.
-                            </div>
-                        </div>
-
-                        <!-- 공모전/대외활동 -->
-                        <div class="timeline-item">
-                            <span class="timeline-badge"></span>
-                            <div class="timeline-year mb-1">2022. 03 ~ 2022. 11</div>
-                            <div class="timeline-title">
-                                「공공데이터 활용 아이디어 공모전」 장려상
-                            </div>
-                            <div class="timeline-sub">
-                                팀장 · 공공기관 채용 공고 데이터 분석 및 서비스 기획
-                            </div>
-                            <div class="timeline-desc mt-1">
-                                공공기관 채용 공고 데이터를 수집·분석해 직무별 요구 역량과 지역별 채용
-                                트렌드를 시각화하는 웹 서비스 기획을 담당했습니다. 이 경험을 바탕으로
-                                JobPort 서비스 이용 시에도 공고 분석에 강점을 가지고 있습니다.
-                            </div>
-                        </div>
-
-                        <!-- 학부 시절 / 학회 활동 -->
-                        <div class="timeline-item">
-                            <span class="timeline-badge"></span>
-                            <div class="timeline-year mb-1">2019. 03 ~ 2021. 12</div>
-                            <div class="timeline-title">
-                                학과 행정 보조 및 경영학 학회 활동
-                            </div>
-                            <div class="timeline-sub">
-                                학사 행정 보조, 행사 기획, 팀 프로젝트 발표 다수 수행
-                            </div>
-                            <div class="timeline-desc mt-1">
-                                학과 사무실에서 시간제 행정 보조로 근무하며 문서 정리, 공지사항 게시,
-                                행사 지원 업무를 수행했습니다. 동시에 경영학 학회에서 팀 프로젝트를
-                                통해 발표 자료 제작과 발표 경험을 쌓았습니다.
-                            </div>
-                        </div>
-
-                        <!-- 대학 입학/졸업 -->
-                        <div class="timeline-item">
-                            <span class="timeline-badge"></span>
-                            <div class="timeline-year mb-1">2013. 03 ~ 2019. 02</div>
-                            <div class="timeline-title">
-                                ○○대학교 경영학과 재학 및 졸업
-                            </div>
-                            <div class="timeline-sub">
-                                경영학 전공 · 경영정보 / 인사조직 트랙
-                            </div>
-                            <div class="timeline-desc mt-1">
-                                회계, 재무, 인사, 조직, 데이터 분석 관련 과목을 수강하며 공공기관 및
-                                기업 전반에 대한 이해를 키웠습니다. 팀 프로젝트 위주의 수업을 통해
-                                협업과 역할 분담, 기한 내 결과 도출 역량을 강화했습니다.
-                            </div>
-                        </div>
-
                     </div>
+
+                    <div th:if="*{activities == null or #lists.isEmpty(activities)}"
+                         class="text-muted small mb-3">
+                        등록된 대외활동 정보가 없습니다.
+                    </div>
+
+                    <div th:each="act, stat : *{activities}"
+                         class="border rounded bg-light p-3 mb-3">
+                        <div class="entity-block-header d-flex align-items-center justify-content-between mb-2">
+                            <span class="entity-block-title small font-weight-bold text-primary">
+                                활동 [[${stat.index + 1}]]
+                            </span>
+                        </div>
+                        <div class="row small">
+                            <div class="col-md-4 mb-1">
+                                <div class="text-gray-600">활동 유형</div>
+                                <div th:text="${act.activityType} ?: '-'">학생회</div>
+                            </div>
+                            <div class="col-md-8 mb-1">
+                                <div class="text-gray-600">기관/조직명</div>
+                                <div th:text="${act.organizationName} ?: '-'">○○대학교 총학생회</div>
+                            </div>
+                        </div>
+                        <div class="row small mt-2">
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">시작월</div>
+                                <div th:text="${act.startMonth} ?: '-'">2023-03</div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">종료월</div>
+                                <div th:text="${act.endMonth} ?: '-'">2023-12</div>
+                            </div>
+                            <div class="col-md-6 mb-1">
+                                <div class="text-gray-600">주요 내용</div>
+                                <div th:text="${act.description} ?: '-'">
+                                    기획, 행사 운영, 예산 집행, 발표 등 역할 중심으로 작성
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Training -->
+                    <div class="d-flex align-items-center justify-content-between mt-3 mb-2">
+                        <div>
+                            <div class="text-primary text-uppercase small font-weight-bold mb-1">
+                                교육 · 연수 (Training)
+                            </div>
+                            <div class="small text-muted">
+                                직무 관련 교육, 부트캠프, 국비과정, 어학연수 등.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="*{trainings == null or #lists.isEmpty(trainings)}"
+                         class="text-muted small">
+                        등록된 교육·연수 정보가 없습니다.
+                    </div>
+
+                    <div th:each="tr, stat : *{trainings}"
+                         class="border rounded bg-light p-3 mb-3">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="entity-block-title small font-weight-bold text-primary">
+                                교육/연수 [[${stat.index + 1}]]
+                            </span>
+                        </div>
+                        <div class="row small">
+                            <div class="col-md-6 mb-1">
+                                <div class="text-gray-600">교육/연수명</div>
+                                <div th:text="${tr.trainingName} ?: '-'">
+                                    공공데이터 분석 전문가 과정
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-1">
+                                <div class="text-gray-600">교육기관명</div>
+                                <div th:text="${tr.institutionName} ?: '-'">
+                                    ○○교육원, ○○대학교 평생교육원
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row small mt-2">
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">시작월</div>
+                                <div th:text="${tr.startMonth} ?: '-'">2023-01</div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">종료월</div>
+                                <div th:text="${tr.endMonth} ?: '-'">2023-06</div>
+                            </div>
+                            <div class="col-md-6 mb-1">
+                                <div class="text-gray-600">주요 내용</div>
+                                <div th:text="${tr.description} ?: '-'">
+                                    수강 시간, 커리큘럼, 프로젝트 수행 등 요약
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificate & LanguageScore -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-certificate mr-1"></i> 자격증 (Certificate) · 어학 (LanguageScore)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <!-- Certificates -->
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div>
+                            <div class="text-primary text-uppercase small font-weight-bold mb-1">
+                                자격증 (Certificate)
+                            </div>
+                            <div class="small text-muted">
+                                공고에서 요구하거나 우대하는 자격증 위주.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="*{certificates == null or #lists.isEmpty(certificates)}"
+                         class="text-muted small mb-3">
+                        등록된 자격증 정보가 없습니다.
+                    </div>
+
+                    <div th:each="cert, stat : *{certificates}"
+                         class="border rounded bg-light p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="entity-block-title small font-weight-bold text-primary">
+                                자격증 [[${stat.index + 1}]]
+                            </span>
+                        </div>
+                        <div class="row small">
+                            <div class="col-md-5 mb-1">
+                                <div class="text-gray-600">자격증명</div>
+                                <div th:text="${cert.certificateName} ?: '-'">
+                                    사회조사분석사 2급
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-1">
+                                <div class="text-gray-600">발행기관</div>
+                                <div th:text="${cert.issuer} ?: '-'">
+                                    한국산업인력공단
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">취득월</div>
+                                <div th:text="${cert.acquiredMonth} ?: '-'">2023-10</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Language Scores -->
+                    <div class="d-flex align-items-center justify-content-between mt-3 mb-2">
+                        <div class="text-primary text-uppercase small font-weight-bold">
+                            어학 (LanguageScore)
+                        </div>
+                    </div>
+
+                    <div th:if="*{languageScores == null or #lists.isEmpty(languageScores)}"
+                         class="text-muted small">
+                        등록된 어학 성적 정보가 없습니다.
+                    </div>
+
+                    <div th:each="lang, stat : *{languageScores}"
+                         class="border rounded bg-light p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="entity-block-title small font-weight-bold text-primary">
+                                어학 성적 [[${stat.index + 1}]]
+                            </span>
+                        </div>
+                        <div class="row small">
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">언어</div>
+                                <div th:text="${lang.languageName} ?: '-'">영어</div>
+                            </div>
+                            <div class="col-md-4 mb-1">
+                                <div class="text-gray-600">시험명</div>
+                                <div th:text="${lang.examName} ?: '-'">TOEIC</div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">점수/등급</div>
+                                <div th:text="${lang.score} ?: '-'">850점</div>
+                            </div>
+                            <div class="col-md-2 mb-1">
+                                <div class="text-gray-600">취득일</div>
+                                <div th:text="${#temporals.format(lang.acquiredDate, 'yyyy-MM-dd')}"
+                                     th:if="${lang.acquiredDate != null}">2023-09-01</div>
+                                <div th:if="${lang.acquiredDate == null}">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OverseasExperience -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-globe-asia mr-1"></i> 해외 경험 (OverseasExperience)
+                    </h6>
+                    <span class="small text-gray-500">
+                        history/자기소개서 화면에 함께 활용 가능합니다.
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div th:if="*{overseasExperiences == null or #lists.isEmpty(overseasExperiences)}"
+                         class="text-muted small">
+                        등록된 해외 경험 정보가 없습니다.
+                    </div>
+
+                    <div th:each="ov, stat : *{overseasExperiences}"
+                         class="border rounded bg-light p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="entity-block-title small font-weight-bold text-primary">
+                                해외 경험 [[${stat.index + 1}]]
+                            </span>
+                        </div>
+                        <div class="row small">
+                            <div class="col-md-4 mb-1">
+                                <div class="text-gray-600">국가</div>
+                                <div th:text="${ov.country} ?: '-'">미국</div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">시작월</div>
+                                <div th:text="${ov.startMonth} ?: '-'">2022-01</div>
+                            </div>
+                            <div class="col-md-3 mb-1">
+                                <div class="text-gray-600">종료월</div>
+                                <div th:text="${ov.endMonth} ?: '-'">2022-06</div>
+                            </div>
+                        </div>
+                        <div class="row small mt-2">
+                            <div class="col-md-12 mb-1">
+                                <div class="text-gray-600">주요 내용</div>
+                                <div th:text="${ov.description} ?: '-'">
+                                    교환학생으로 전공 과목 수강, 프로젝트 수행, 현지 봉사활동 등
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 하단 버튼 -->
+            <div class="d-flex justify-content-between mb-4">
+                <div>
+                    <a th:href="@{/resumes}" class="btn btn-light border">
+                        <i class="fas fa-list mr-1"></i> 목록으로
+                    </a>
+                </div>
+                <div>
+                    <a th:href="@{/resumes/edit}" class="btn btn-primary mr-2">
+                        <i class="fas fa-edit mr-1"></i> 이력 수정
+                    </a>
+                    <button type="button" class="btn btn-outline-info" onclick="window.print()">
+                        <i class="fas fa-print mr-1"></i> 인쇄
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-
 </section>
 
-<!-- history 전용 JS (현재는 없음) -->
 <th:block layout:fragment="script-extra">
     <script>
-        // 추후 이력 편집/버튼 활성화 시 사용할 JS 영역
-        // 예: 이력 데이터 로딩, 모달 오픈 등
+        // 조회 화면이라 별도 동적 스크립트는 최소화
     </script>
 </th:block>
 </body>
