@@ -14,3 +14,18 @@ spring:
   liquibase:
     change-log: classpath:/db/migration.yml
 #    enabled: false
+
+auth:
+  kakao:
+    client-id: ${KAKAO_REST_API_KEY}
+    response-type: code
+    authorize-uri: https://kauth.kakao.com/oauth/authorize
+    redirect-uri: ${KAKAO_REDIRECT_URI}
+    client-secret: ${KAKAO_CLIENT_SECRET}
+
+server:
+  tomcat:
+    max-part-count: 200
+  servlet:
+    session:
+      timeout: 30m

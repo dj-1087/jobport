@@ -1,6 +1,7 @@
 <!-- templates/layouts/base.html -->
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8"/>
@@ -11,15 +12,18 @@
     <link rel="stylesheet" th:href="@{/vendor/fontawesome-free/css/all.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/sb-admin-2.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/common.css}"/>
+
+    <!-- 자식에서 추가할 CSS 자리 -->
+    <th:block layout:fragment="head-extra"></th:block>
 </head>
 <body id="page-top">
 <div id="wrapper">
 
-    <nav th:replace="~{fragments/sidebar :: sidebar(currentUri=${currentUri})}"></nav>
+    <nav th:replace="~{fragments/common/sidebar :: sidebar(currentUri=${currentUri})}"></nav>
 
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-            <header th:replace="~{fragments/topbar :: topbar}"></header>
+            <header th:replace="~{fragments/common/topbar :: topbar}"></header>
 
             <!-- 여기만 페이지마다 바뀜 -->
             <main class="container-fluid">
@@ -27,10 +31,12 @@
             </main>
         </div>
 
-        <footer th:replace="~{fragments/footer :: footer}"></footer>
+        <footer th:replace="~{fragments/common/footer :: footer}"></footer>
     </div>
 </div>
 
-<th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+<th:block th:replace="~{fragments/common/scripts :: scripts}"></th:block>
+<!-- 자식에서 추가할 JS 자리 -->
+<th:block layout:fragment="script-extra"></th:block>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <!-- templates/fragments/topbar.html -->
-<header xmlns:th="http://www.thymeleaf.org" th:fragment="topbar"
-     class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+<header xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" th:fragment="topbar"
+        class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
     <!-- 검색/알림/프로필 등 상단바 내용 -->
     <!-- Sidebar Toggle (Topbar) -->
     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
@@ -50,7 +50,7 @@
 
         <!-- Nav Item - Alerts -->
         <!--        TODO: 로그인 적용후 d-none 제거-->
-        <li class="d-none nav-item dropdown no-arrow mx-1">
+        <li class="nav-item dropdown no-arrow mx-1" sec:authorize="isAuthenticated()">
             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-bell fa-fw"></i>
@@ -169,12 +169,13 @@
 
         <div class="topbar-divider d-none d-sm-block"></div>
 
-        <li class="nav-item">
+        <li class="nav-item" sec:authorize="isAnonymous()">
             <a class="nav-link"
-               href="#"
+               th:href="@{/login}"
                id="login-button"
-               role="button">
-                <span class="mr-1 text-gray-800 d-none d-md-block text-nowrap">로그인</span>
+               role="button"
+            >
+                <span class="mr-1 btn btn-warning d-none d-md-block text-nowrap">카카오 로그인</span>
                 <i class="fas fa-fw fa-sign-in-alt text-gray-800"></i>
             </a>
 <!--            <a class="nav-link"-->
@@ -192,35 +193,36 @@
         </li>
         <!-- Nav Item - User Information -->
 <!--        TODO: 로그인 적용후 d-none 제거-->
-<!--        <li class="d-none nav-item dropdown no-arrow">-->
-<!--            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"-->
-<!--               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-<!--                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>-->
-<!--                <img class="img-profile rounded-circle"-->
-<!--                     src="img/undraw_profile.svg">-->
-<!--            </a>-->
-<!--            &lt;!&ndash; Dropdown - User Information &ndash;&gt;-->
-<!--            <div class="dropdown-menu dropdown-menu-right shadow animated&#45;&#45;grow-in"-->
-<!--                 aria-labelledby="userDropdown">-->
-<!--                <a class="dropdown-item" href="#">-->
-<!--                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>-->
-<!--                    Profile-->
-<!--                </a>-->
-<!--                <a class="dropdown-item" href="#">-->
-<!--                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>-->
-<!--                    Settings-->
-<!--                </a>-->
-<!--                <a class="dropdown-item" href="#">-->
-<!--                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>-->
-<!--                    Activity Log-->
-<!--                </a>-->
-<!--                <div class="dropdown-divider"></div>-->
-<!--                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">-->
-<!--                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>-->
-<!--                    Logout-->
-<!--                </a>-->
-<!--            </div>-->
-<!--        </li>-->
+        <li class="nav-item dropdown no-arrow" sec:authorize="isAuthenticated()">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"
+                      sec:authentication="principal.member.name">Douglas McGee</span>
+                <img class="img-profile rounded-circle"
+                     th:src="${#authentication.principal.member.profileImageSrc}">
+            </a>
+            <!-- Dropdown - User Information -->
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                 aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Profile
+                </a>
+                <a class="dropdown-item" href="#">
+                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Settings
+                </a>
+                <a class="dropdown-item" href="#">
+                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Activity Log
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Logout
+                </a>
+            </div>
+        </li>
 
     </ul>
 </header>

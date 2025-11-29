@@ -1,4 +1,4 @@
-package dev.mju.jobport.modules.site.web;
+package dev.mju.jobport.modules.recruitment.web;
 
 import dev.mju.jobport.modules.recruitment.application.RecruitmentService;
 import dev.mju.jobport.modules.recruitment.domain.Recruitment;
@@ -10,14 +10,16 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
-public class SiteController {
-
+@RequestMapping("/recruitments")
+public class RecruitmentController {
     private final RecruitmentService recruitmentService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public String index(
             Model model,
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
@@ -27,7 +29,17 @@ public class SiteController {
 
         model.addAttribute("recruitments", recruitmentPage.getContent());
         model.addAttribute("page", recruitmentPage);
-        return "pages/common/index";
+        return "pages/recruitment/index";
     }
 
+    @GetMapping("/{recruitmentId}")
+    public String detail(
+            @PathVariable long recruitmentId,
+            Model model
+    ) throws Exception {
+        Recruitment recruitment = recruitmentService.find(recruitmentId);
+
+        model.addAttribute("recruitment", recruitment);
+        return "pages/recruitment/detail";
+    }
 }

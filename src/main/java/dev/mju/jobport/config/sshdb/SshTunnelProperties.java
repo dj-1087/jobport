@@ -1,11 +1,13 @@
-package dev.mju.jobport.config;
+package dev.mju.jobport.config.sshdb;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Profile;
 
 @Setter
 @Getter
+@Profile("dev")
 @ConfigurationProperties(prefix = "ssh")
 public class SshTunnelProperties {
     private String host;

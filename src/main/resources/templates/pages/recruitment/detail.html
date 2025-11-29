@@ -1,0 +1,400 @@
+<!-- templates/pages/recruitment/detail.html -->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/base}">
+
+<head>
+    <title layout:fragment="title">채용 공고 상세 정보</title>
+
+    <th:block layout:fragment="head-extra">
+        <!-- SB Admin 2 / Bootstrap4 기본 CSS만 사용 -->
+    </th:block>
+</head>
+
+<body>
+<section layout:fragment="content">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h1 class="h3 mb-2 text-gray-800 d-flex flex-wrap align-items-center">
+                <span class="badge badge-primary mr-2 mb-1"
+                      th:text="${recruitment.institution != null ? recruitment.institution.institutionName : '기관명 미등록'}">
+                    기관명
+                </span>
+                <span class="mb-1" th:text="${recruitment.title}">채용 공고 제목</span>
+            </h1>
+            <div class="text-muted small">
+                <span class="mr-3">
+                    <i class="far fa-calendar-alt mr-1"></i>
+                    등록일:
+                    <span th:text="${recruitment.regDate != null ?
+                                    #temporals.format(recruitment.regDate, 'yyyy.MM.dd') : '-'}">
+                        2025.01.01
+                    </span>
+                </span>
+                <span class="mr-3">
+                    <i class="far fa-calendar-times mr-1"></i>
+                    마감일:
+                    <span th:text="${recruitment.closeDate != null ?
+                                    #temporals.format(recruitment.closeDate, 'yyyy.MM.dd') : '-'}">
+                        2025.01.15
+                    </span>
+                </span>
+                <span class="mr-3" th:if="${recruitment.recruitCount != null}">
+                    <i class="fas fa-user-friends mr-1"></i>
+                    채용인원:
+                    <span th:text="${recruitment.recruitCount + '명'}">1명</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="mt-3 mt-sm-0">
+            <a class="btn btn-sm btn-secondary mr-2"
+               th:href="@{/recruitments}">
+                <i class="fas fa-arrow-left fa-sm mr-1"></i>
+                목록으로
+            </a>
+
+            <!-- 북마크 / 기타 액션 버튼 -->
+            <button type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="관심 공고로 저장">
+                <i class="far fa-bookmark mr-1"></i> 북마크
+            </button>
+        </div>
+    </div>
+
+    <!-- 공고 URL -->
+    <div class="mb-4">
+        <span class="font-weight-bold mr-2">공고 URL :</span>
+        <span th:if="${recruitment.announcementUrl != null}" class="d-inline-block">
+            <a th:href="${recruitment.announcementUrl}"
+               th:text="${recruitment.announcementUrl}"
+               target="_blank"
+               class="text-primary">
+                www.sample.com
+            </a>
+        </span>
+        <span th:if="${recruitment.announcementUrl == null}" class="text-muted">
+            등록된 공고 URL이 없습니다.
+        </span>
+    </div>
+
+    <div class="row">
+        <!-- 기본 정보 카드 : 전체 폭 사용 -->
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-info-circle mr-2"></i>기본 정보
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm mb-0">
+                        <tbody>
+                        <tr>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>기관명
+                            </th>
+                            <td class="align-middle"
+                                th:text="${recruitment.institution != null ? recruitment.institution.institutionName : '-'}">
+                                한국공공기관
+                            </td>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>채용구분
+                            </th>
+                            <td class="align-middle"
+                                th:text="${recruitment.recruitType != null ? recruitment.recruitType.recruitTypeName : '-'}">
+                                정규직 / 신입
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>고용형태
+                            </th>
+                            <td class="align-middle">
+                                <span class="mr-1"
+                                      th:each="type : ${recruitment.employmentTypeList}"
+                                      th:text="${type.employmentTypeName}">
+                                    정규직
+                                </span>
+                                <span th:if="${#lists.isEmpty(recruitment.employmentTypeList)}"
+                                      class="text-muted">-</span>
+                            </td>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>대체인력여부
+                            </th>
+                            <td class="align-middle"
+                                th:text="${recruitment.isReplacement != null ?
+                                          (recruitment.isReplacement ? '예' : '아니오') : '-'}">
+                                아니오
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>근무지
+                            </th>
+                            <td class="align-middle">
+                                <span class="mr-1"
+                                      th:each="loc : ${recruitment.workLocation}"
+                                      th:text="${loc.workLocationName}">
+                                    서울
+                                </span>
+                                <span th:if="${#lists.isEmpty(recruitment.workLocation)}"
+                                      class="text-muted">-</span>
+                            </td>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>채용인원
+                            </th>
+                            <td class="align-middle"
+                                th:text="${recruitment.recruitCount != null ?
+                                          recruitment.recruitCount + '명' : '-'}">
+                                1명
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>표준직무(NCS)
+                            </th>
+                            <td class="align-middle">
+                                <span class="mr-1"
+                                      th:each="ncs : ${recruitment.ncsList}"
+                                      th:text="${ncs.ncsName}">
+                                    경영·사무
+                                </span>
+                                <span th:if="${#lists.isEmpty(recruitment.ncsList)}"
+                                      class="text-muted">-</span>
+                            </td>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>근무분야
+                            </th>
+                            <td class="align-middle">
+                                <span class="mr-1"
+                                      th:each="field : ${recruitment.workFieldList}"
+                                      th:text="${field.workFieldName}">
+                                    시설직
+                                </span>
+                                <span th:if="${#lists.isEmpty(recruitment.workFieldList)}"
+                                      class="text-muted">-</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>학력정보
+                            </th>
+                            <td class="align-middle">
+                                <span class="mr-1"
+                                      th:each="edu : ${recruitment.educationLevelList}"
+                                      th:text="${edu.educationLevelName}">
+                                    학력무관
+                                </span>
+                                <span th:if="${#lists.isEmpty(recruitment.educationLevelList)}"
+                                      class="text-muted">-</span>
+                            </td>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>급여정보
+                            </th>
+                            <td class="align-middle">
+                                <a class="btn btn-primary btn-sm"
+                                   th:if="${recruitment.salaryInfoUrl != null}"
+                                   th:href="${recruitment.salaryInfoUrl}"
+                                   target="_blank">
+                                    <span>상세보기</span>
+                                    <i class="fas fa-search ml-1"></i>
+                                </a>
+                                <span th:if="${recruitment.salaryInfoUrl == null}" class="text-muted">
+                                    별도 표기 없음
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>채용기간
+                            </th>
+                            <td class="align-middle">
+                                <span th:text="${
+                                         recruitment.regDate != null && recruitment.closeDate != null ?
+                                         #temporals.format(recruitment.regDate, 'yy.MM.dd') + ' ~ ' +
+                                         #temporals.format(recruitment.closeDate, 'yy.MM.dd') : '-'
+                                     }">
+                                    25.01.01 ~ 25.01.15
+                                </span>
+                            </td>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>시스템 등록/수정
+                            </th>
+                            <td class="align-middle">
+                                <div class="small text-muted">
+                                    등록:
+                                    <span th:text="${recruitment.createdAt != null ?
+                                                   #temporals.format(recruitment.createdAt, 'yyyy.MM.dd HH:mm') : '-'}">
+                                        2025.01.01 10:00
+                                    </span>
+                                </div>
+                                <div class="small text-muted">
+                                    수정:
+                                    <span th:text="${recruitment.updatedAt != null ?
+                                                   #temporals.format(recruitment.updatedAt, 'yyyy.MM.dd HH:mm') : '-'}">
+                                        2025.01.02 11:30
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th class="align-middle bg-light text-nowrap">
+                                <i class="fas fa-circle text-primary mr-2 small"></i>우대조건(요약)
+                            </th>
+                            <td colspan="3" class="align-middle">
+                                <span th:text="${recruitment.preferenceCondition != null ?
+                                                recruitment.preferenceCondition : '-'}">
+                                    취업보호(지원)대상자, 장애인 등
+                                </span>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 상세 내용 섹션들 : 긴 문단/짧은 문장 모두 대응 -->
+    <div class="row">
+        <div class="col-12 col-xl-6 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <span class="font-weight-bold text-primary">
+                        <i class="fas fa-star mr-2"></i>우대 사항 상세
+                    </span>
+                    <i class="fas fa-info-circle text-gray-400"></i>
+                </div>
+                <div class="card-body">
+                    <div class="small text-gray-900"
+                         th:text="${recruitment.preferenceDetail != null ?
+                                   recruitment.preferenceDetail : '등록된 우대 사항 상세가 없습니다.'}">
+                        우대 사항 상세 내용
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-6 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <span class="font-weight-bold text-primary">
+                        <i class="fas fa-user-check mr-2"></i>지원 자격
+                    </span>
+                    <i class="fas fa-user-check text-gray-400"></i>
+                </div>
+                <div class="card-body">
+                    <div class="small text-gray-900"
+                         th:text="${recruitment.qualification != null ?
+                                   recruitment.qualification : '등록된 지원 자격 정보가 없습니다.'}">
+                        지원 자격 내용
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-6 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <span class="font-weight-bold text-primary">
+                        <i class="fas fa-user-times mr-2"></i>결격 사유
+                    </span>
+                    <i class="fas fa-user-times text-gray-400"></i>
+                </div>
+                <div class="card-body">
+                    <div class="small text-gray-900"
+                         th:text="${recruitment.disqualification != null ?
+                                   recruitment.disqualification : '등록된 결격 사유 정보가 없습니다.'}">
+                        결격 사유 내용
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-6 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <span class="font-weight-bold text-primary">
+                        <i class="fas fa-stream mr-2"></i>전형 절차
+                    </span>
+                    <i class="fas fa-stream text-gray-400"></i>
+                </div>
+                <div class="card-body">
+                    <div class="small text-gray-900"
+                         th:text="${recruitment.selectionProcess != null ?
+                                   recruitment.selectionProcess : '등록된 전형 절차 정보가 없습니다.'}">
+                        전형 절차 내용
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 단계별 전형 정보 -->
+    <div class="row"
+         th:if="${recruitment.selectionStages != null and !#lists.isEmpty(recruitment.selectionStages)}">
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <span class="font-weight-bold text-primary">
+                        <i class="fas fa-list-ol mr-2"></i>단계별 전형 정보
+                    </span>
+                    <i class="fas fa-list-ol text-gray-400"></i>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm mb-0">
+                        <thead class="thead-light">
+                        <tr>
+                            <th class="text-nowrap">전형구분</th>
+                            <th class="text-nowrap">선발인원</th>
+                            <th class="text-nowrap">응시인원</th>
+                            <th class="text-nowrap">결과 확정일</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="stage, iter : ${recruitment.selectionStages}">
+                            <td class="align-middle"
+                                th:text="${stage.selectionStageType != null ? stage.selectionStageType.selectionStageTypeName : '-'}">
+                                서류전형
+                            </td>
+                            <td class="align-middle"
+                                th:text="${stage.selectedCount != null ? stage.selectedCount : '-'}"></td>
+                            <td class="align-middle"
+                                th:text="${stage.applicantCount != null ? stage.applicantCount : '-'}"></td>
+                            <td class="align-middle"
+                                th:text="${stage.resultConfirmDate != null ? stage.resultConfirmDate : '-'}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<th:block layout:fragment="script-extra">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+        /*]]>*/
+    </script>
+</th:block>
+</body>
+</html>
