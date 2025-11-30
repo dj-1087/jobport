@@ -9,6 +9,8 @@
 
     <th:block layout:fragment="head-extra">
         <!-- SB Admin 2 / Bootstrap4 기본 CSS만 사용 -->
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     </th:block>
 </head>
 
@@ -59,11 +61,17 @@
 
             <!-- 북마크 / 기타 액션 버튼 -->
             <button type="button"
-                    class="btn btn-sm btn-outline-primary"
+                    id="bookmarkBtn"
+                    class="btn btn-sm"
+                    th:classappend="${bookmarked} ? ' btn-primary' : ' btn-outline-primary'"
+                    th:data-recruitment-id="${recruitment.id}"
+                    th:data-bookmarked="${bookmarked}"
                     data-toggle="tooltip"
                     data-placement="bottom"
-                    title="관심 공고로 저장">
-                <i class="far fa-bookmark mr-1"></i> 북마크
+                    th:title="${bookmarked} ? '관심 공고에서 제거' : '관심 공고로 저장'">
+                <i class="mr-1"
+                   th:class="${bookmarked} ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+                <span th:text="${bookmarked} ? '북마크됨' : '북마크'">북마크</span>
             </button>
         </div>
     </div>
@@ -392,6 +400,61 @@
         /*<![CDATA[*/
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
+
+            const csrfToken  = $("meta[name='_csrf']").attr("content");
+            const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+            $("#bookmarkBtn").on("click", function () {
+                const recruitmentId = $(this).data("recruitment-id");
+                const $btn = $(this);
+
+                $.ajax({
+                    url: "/recruitments/" + recruitmentId + "/bookmark",
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        if (csrfToken && csrfHeader) {
+                            xhr.setRequestHeader(csrfHeader, csrfToken);
+                        }
+                    },
+                    success: function (res) {
+                        const bookmarked = res.bookmarked; // true: 북마크됨, false: 해제됨
+                        $btn.data("bookmarked", bookmarked);
+
+                        // 툴팁 재설정
+                        $btn.tooltip("dispose");
+
+                        if (bookmarked) {
+                            // 북마크 된 상태 UI
+                            $btn
+                                .removeClass("btn-outline-primary")
+                                .addClass("btn-primary")
+                                .attr("title", "관심 공고에서 제거");
+                            $btn.find("i")
+                                .removeClass("far")
+                                .addClass("fas");
+                            $btn.find("span").text("북마크됨");
+                        } else {
+                            // 북마크 해제 상태 UI
+                            $btn
+                                .removeClass("btn-primary")
+                                .addClass("btn-outline-primary")
+                                .attr("title", "관심 공고로 저장");
+                            $btn.find("i")
+                                .removeClass("fas")
+                                .addClass("far");
+                            $btn.find("span").text("북마크");
+                        }
+
+                        $btn.tooltip(); // 다시 초기화
+
+                        alert(res.message || (bookmarked ? "저장되었습니다." : "삭제되었습니다."));
+                    },
+                    error: function (xhr) {
+                        console.error(xhr);
+                        alert("북마크 처리 중 오류가 발생했습니다.");
+                    }
+                });
+            });
         });
         /*]]>*/
     </script>

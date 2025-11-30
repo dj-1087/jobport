@@ -1,5 +1,7 @@
 package dev.mju.jobport.modules.resume.domain;
 
+import dev.mju.jobport.modules.recruitment.domain.Bookmark;
+import dev.mju.jobport.modules.recruitment.domain.Recruitment;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -88,6 +90,16 @@ public class Member {
             orphanRemoval = true
     )
     private List<Portfolio> portfolios;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<Bookmark> bookmarks;
+
+    @Transient
+    public List<Recruitment> getBookmarkRecruitmentList() {
+        return bookmarks.stream()
+                .map(Bookmark::getRecruitment)
+                .toList();
+    }
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

@@ -1,0 +1,29 @@
+<!-- templates/pages/edit.html -->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/base}">
+<head>
+    <title layout:fragment="title">채용 공고 목록</title>
+
+    <!-- index가 포함한 fragment들의 head-extra를 모아서 전달 -->
+    <th:block layout:fragment="head-extra">
+        <th:block th:replace="~{fragments/bookmark/list :: head-extra}"></th:block>
+    </th:block>
+</head>
+<body>
+<section layout:fragment="content">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">채용 공고 목록</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                class="fas fa-download fa-sm text-white-50"></i>목록 다운로드</a>
+    </div>
+    <div class="row">
+        <section th:replace="~{fragments/bookmark/list :: listTable(${recruitments})}"></section>
+    </div>
+</section>
+<!-- fragment별 script 모음 -->
+<th:block layout:fragment="script-extra">
+    <th:block th:replace="~{fragments/bookmark/list :: script-extra}"></th:block>
+</th:block>
+</body>
+</html>
