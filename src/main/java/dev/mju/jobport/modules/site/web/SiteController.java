@@ -1,5 +1,6 @@
 package dev.mju.jobport.modules.site.web;
 
+import dev.mju.jobport.modules.chart.application.ChartViewModelAssembler;
 import dev.mju.jobport.modules.recruitment.application.RecruitmentService;
 import dev.mju.jobport.modules.recruitment.domain.Recruitment;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class SiteController {
 
     private final RecruitmentService recruitmentService;
+    private final ChartViewModelAssembler chartViewModelAssembler;
 
     @GetMapping("/")
     public String index(
@@ -27,6 +29,7 @@ public class SiteController {
 
         model.addAttribute("recruitments", recruitmentPage.getContent());
         model.addAttribute("page", recruitmentPage);
+        chartViewModelAssembler.populateRecruitmentCharts(model);
         return "pages/common/index";
     }
 

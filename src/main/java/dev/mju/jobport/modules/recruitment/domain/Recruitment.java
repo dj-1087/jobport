@@ -1,5 +1,6 @@
 package dev.mju.jobport.modules.recruitment.domain;
 
+import dev.mju.jobport.modules.resume.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -114,6 +115,16 @@ public class Recruitment {
     public List<EducationLevel> getEducationLevelList() {
         return educationLevelMaps.stream()
                 .map(RecruitmentEducationLevelMap::getEducationLevel)
+                .toList();
+    }
+
+    @OneToMany(mappedBy = "recruitment", fetch = FetchType.LAZY)
+    private List<Bookmark> bookmarks;
+
+    @Transient
+    public List<Member> getBookmarkMemberList() {
+        return bookmarks.stream()
+                .map(Bookmark::getMember)
                 .toList();
     }
 

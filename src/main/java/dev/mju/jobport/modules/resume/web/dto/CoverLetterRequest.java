@@ -1,0 +1,14 @@
+package dev.mju.jobport.modules.resume.web.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record CoverLetterRequest(
+        @NotBlank(message = "문항 제목을 입력해주세요.")
+        @Size(max = 200, message = "문항 제목은 200자 이하여야 합니다.")
+        String title,
+
+        @Size(max = 8000, message = "본문은 8000자를 초과할 수 없습니다.")
+        String content
+) {
+}
