@@ -1,0 +1,303 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="chartOverview">
+    <!-- Content Row: 상단 2개 그래프 -->
+    <div class="row">
+
+        <!-- 근무지(지역)별 공고 수 -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">근무지(지역)별 공고 수</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar" style="height: 350px;">
+                        <canvas id="workLocationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 학력 요건별 공고 수 -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-success">학력 요건별 공고 수</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar" style="height: 350px;">
+                        <canvas id="educationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Content Row: NCS 그래프 -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-info">NCS(표준직무)별 공고 수</h6>
+                    <span class="small text-muted">NCS 분류 25개 기준</span>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar" style="height: 500px;">
+                        <canvas id="ncsChart"></canvas>
+                    </div>
+                    <small class="text-muted">* 분류명이 길 경우, 마우스를 올리면 전체 명칭을 Tooltip으로 확인할 수 있습니다.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="chartScripts">
+    <script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var workLocationLabels = /*[[${workLocationLabels}]]*/ [];
+        var workLocationCounts = /*[[${workLocationCounts}]]*/ [];
+
+        var educationLabels = /*[[${educationLabels}]]*/ [];
+        var educationCounts = /*[[${educationCounts}]]*/ [];
+
+        var ncsLabels = /*[[${ncsLabels}]]*/ [];
+        var ncsCounts = /*[[${ncsCounts}]]*/ [];
+
+        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        Chart.defaults.global.defaultFontColor = '#858796';
+
+        function generateColors(length, baseColor) {
+            var colors = [];
+            for (var i = 0; i < length; i++) {
+                colors.push(baseColor || 'rgba(78, 115, 223, 0.7)');
+            }
+            return colors;
+        }
+
+        var ctxWorkLocation = document.getElementById("workLocationChart");
+        if (ctxWorkLocation) {
+            new Chart(ctxWorkLocation, {
+                type: 'bar',
+                data: {
+                    labels: workLocationLabels,
+                    datasets: [{
+                        label: "공고 수",
+                        data: workLocationCounts,
+                        backgroundColor: generateColors(workLocationLabels.length, 'rgba(78, 115, 223, 0.7)'),
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        borderWidth: 1,
+                        maxBarThickness: 40
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 25,
+                            top: 25,
+                            bottom: 10
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                maxTicksLimit: 10
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                precision: 0
+                            },
+                            gridLines: {
+                                color: "rgb(234, 236, 244)",
+                                zeroLineColor: "rgb(234, 236, 244)",
+                                drawBorder: false,
+                                borderDash: [2],
+                                zeroLineBorderDash: [2]
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        titleMarginBottom: 10,
+                        titleFontColor: '#6e707e',
+                        titleFontSize: 14,
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return ' 공고 수 : ' + tooltipItem.yLabel;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        var ctxEducation = document.getElementById("educationChart");
+        if (ctxEducation) {
+            new Chart(ctxEducation, {
+                type: 'bar',
+                data: {
+                    labels: educationLabels,
+                    datasets: [{
+                        label: "공고 수",
+                        data: educationCounts,
+                        backgroundColor: generateColors(educationLabels.length, 'rgba(28, 200, 138, 0.7)'),
+                        borderColor: 'rgba(28, 200, 138, 1)',
+                        borderWidth: 1,
+                        maxBarThickness: 40
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 25,
+                            top: 25,
+                            bottom: 10
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                maxTicksLimit: 10
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                precision: 0
+                            },
+                            gridLines: {
+                                color: "rgb(234, 236, 244)",
+                                zeroLineColor: "rgb(234, 236, 244)",
+                                drawBorder: false,
+                                borderDash: [2],
+                                zeroLineBorderDash: [2]
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        titleMarginBottom: 10,
+                        titleFontColor: '#6e707e',
+                        titleFontSize: 14,
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return ' 공고 수 : ' + tooltipItem.yLabel;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        var ctxNcs = document.getElementById("ncsChart");
+        if (ctxNcs) {
+            new Chart(ctxNcs, {
+                type: 'horizontalBar',
+                data: {
+                    labels: ncsLabels,
+                    datasets: [{
+                        label: "공고 수",
+                        data: ncsCounts,
+                        backgroundColor: 'rgba(54, 185, 204, 0.7)',
+                        borderColor: 'rgba(54, 185, 204, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 25,
+                            top: 25,
+                            bottom: 10
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                precision: 0
+                            },
+                            gridLines: {
+                                color: "rgb(234, 236, 244)",
+                                zeroLineColor: "rgb(234, 236, 244)",
+                                drawBorder: false,
+                                borderDash: [2],
+                                zeroLineBorderDash: [2]
+                            }
+                        }],
+                        yAxes: [{
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                autoSkip: false,
+                                callback: function (value) {
+                                    return value.length > 12 ? value.substring(0, 12) + '…' : value;
+                                }
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        titleMarginBottom: 10,
+                        titleFontColor: '#6e707e',
+                        titleFontSize: 14,
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return ' 공고 수 : ' + tooltipItem.xLabel;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        /*]]>*/
+    </script>
+</th:block>

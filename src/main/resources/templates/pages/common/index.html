@@ -17,16 +17,14 @@
         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                 class="fas fa-download fa-sm text-white-50"></i> 통계 다운로드</a>
     </div>
-    <div class="row">
-        <section th:replace="~{pages/chart/charts/sample :: sampleChart}"></section>
-    </div>
+    <div th:replace="~{fragments/chart/overview :: chartOverview}"></div>
     <div class="row">
         <section th:replace="~{fragments/recruitment/list :: listTable(${recruitments}, ${page})}"></section>
     </div>
-    <th:block th:replace="~{pages/chart/charts/sample :: chartScripts}"></th:block>
 </section>
 <!-- fragment별 script 모음 -->
 <th:block layout:fragment="script-extra">
+    <th:block th:replace="~{fragments/chart/overview :: chartScripts}"></th:block>
     <th:block th:replace="~{fragments/recruitment/list :: script-extra}"></th:block>
 </th:block>
 </body>
