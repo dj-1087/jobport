@@ -19,7 +19,7 @@
     </div>
     <div th:replace="~{fragments/chart/overview :: chartOverview}"></div>
     <div class="row">
-        <section th:replace="~{fragments/recruitment/list :: listTable(${recruitments}, ${page})}"></section>
+        <section th:replace="~{fragments/recruitment/list :: listTable(${recruitments}, ${page}, ${searchCondition}, ${recruitTypes}, ${statusOptions})}"></section>
     </div>
 </section>
 <!-- fragment별 script 모음 -->

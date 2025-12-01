@@ -2,11 +2,15 @@ package dev.mju.jobport.modules.recruitment.web;
 
 import dev.mju.jobport.config.security.MemberDetails;
 import dev.mju.jobport.modules.recruitment.application.BookmarkService;
+import dev.mju.jobport.modules.recruitment.application.RecruitTypeService;
+import dev.mju.jobport.modules.recruitment.application.RecruitmentFilterOptionService;
 import dev.mju.jobport.modules.recruitment.application.RecruitmentService;
 import dev.mju.jobport.modules.recruitment.domain.Recruitment;
 import dev.mju.jobport.modules.recruitment.domain.RecruitmentAttachment;
 import dev.mju.jobport.modules.recruitment.domain.RecruitmentAttachmentType;
 import dev.mju.jobport.modules.recruitment.web.response.RecruitmentAttachmentView;
+import dev.mju.jobport.modules.recruitment.web.request.RecruitmentSearchCondition;
+import dev.mju.jobport.modules.recruitment.web.request.RecruitmentStatusFilter;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -23,6 +27,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
@@ -45,17 +50,28 @@ import java.util.Locale;
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
     private final BookmarkService bookmarkService;
+    private final RecruitTypeService recruitTypeService;
+    private final RecruitmentFilterOptionService recruitmentFilterOptionService;
 
     @GetMapping("")
     public String index(
+            @ModelAttribute("searchCondition") RecruitmentSearchCondition searchCondition,
             Model model,
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
             Pageable pageable
     ) {
-        Page<Recruitment> recruitmentPage = recruitmentService.findAll(pageable);
+        Page<Recruitment> recruitmentPage = recruitmentService.search(searchCondition, pageable);
 
         model.addAttribute("recruitments", recruitmentPage.getContent());
         model.addAttribute("page", recruitmentPage);
+        model.addAttribute("searchCondition", searchCondition);
+        model.addAttribute("recruitTypes", recruitTypeService.getAvailableTypes());
+        model.addAttribute("statusOptions", RecruitmentStatusFilter.values());
+        model.addAttribute("workLocations", recruitmentFilterOptionService.getWorkLocations());
+        model.addAttribute("employmentTypes", recruitmentFilterOptionService.getEmploymentTypes());
+        model.addAttribute("educationLevels", recruitmentFilterOptionService.getEducationLevels());
+        model.addAttribute("workFields", recruitmentFilterOptionService.getWorkFields());
+        model.addAttribute("ncsList", recruitmentFilterOptionService.getNcsList());
         return "pages/recruitment/index";
     }
 

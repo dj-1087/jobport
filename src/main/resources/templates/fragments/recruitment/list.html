@@ -2,11 +2,149 @@
     <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
 </th:block>
 
-<div th:fragment="listTable(recruitments, page)" class="card shadow mb-4">
+<div th:fragment="listTable(recruitments, page, searchCondition, recruitTypes, statusOptions)" class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">채용 공고 목록</h6>
     </div>
     <div class="card-body">
+        <div class="mb-4">
+            <form class="row"
+                  th:action="@{/recruitments}"
+                  method="get"
+                  th:with="hasAdvancedFilters=${(searchCondition.workLocationIds != null and !#lists.isEmpty(searchCondition.workLocationIds)) 
+                                                or (searchCondition.employmentTypeIds != null and !#lists.isEmpty(searchCondition.employmentTypeIds))
+                                                or (searchCondition.educationLevelIds != null and !#lists.isEmpty(searchCondition.educationLevelIds))
+                                                or (searchCondition.workFieldIds != null and !#lists.isEmpty(searchCondition.workFieldIds))
+                                                or (searchCondition.ncsIds != null and !#lists.isEmpty(searchCondition.ncsIds))}">
+                <div class="col-md-4 mb-3">
+                    <label class="small text-muted mb-1" for="keywordInput">키워드 (제목·기관명)</label>
+                    <input id="keywordInput"
+                           type="text"
+                           class="form-control"
+                           name="keyword"
+                           placeholder="검색어를 입력하세요"
+                           th:value="${searchCondition.keyword}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="small text-muted mb-1" for="recruitTypeSelect">채용구분</label>
+                    <select id="recruitTypeSelect" class="form-control" name="recruitTypeId">
+                        <option value="">전체</option>
+                        <option th:each="type : ${recruitTypes}"
+                                th:value="${type.id}"
+                                th:selected="${searchCondition.recruitTypeId != null and searchCondition.recruitTypeId == type.id}"
+                                th:text="${type.recruitTypeName}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="small text-muted mb-1" for="statusSelect">진행 상태</label>
+                    <select id="statusSelect" class="form-control" name="status">
+                        <option value="">전체</option>
+                        <option th:each="status : ${statusOptions}"
+                                th:value="${status.name()}"
+                                th:text="${status.displayName}"
+                                th:selected="${status == searchCondition.status}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="small text-muted mb-1" for="replacementSelect">대체인력 여부</label>
+                    <select id="replacementSelect" class="form-control" name="replacement">
+                        <option value="">전체</option>
+                        <option value="true"
+                                th:selected="${searchCondition.replacement != null and searchCondition.replacement}">
+                            예
+                        </option>
+                        <option value="false"
+                                th:selected="${searchCondition.replacement != null and !searchCondition.replacement}">
+                            아니오
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-12 mb-3 d-flex justify-content-between">
+                    <div>
+                        <button class="btn btn-link px-0" type="button" data-toggle="collapse"
+                                data-target="#advancedFilters"
+                                th:classappend="${hasAdvancedFilters} ? '' : ' collapsed'"
+                                th:attr="aria-expanded=${hasAdvancedFilters}"
+                                aria-controls="advancedFilters">
+                            <i class="fas fa-sliders-h mr-1"></i> 고급 필터
+                        </button>
+                    </div>
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary mr-2">
+                            <i class="fas fa-search mr-1"></i> 검색
+                        </button>
+                        <a class="btn btn-outline-secondary"
+                           th:href="@{/recruitments}">
+                            초기화
+                        </a>
+                    </div>
+                </div>
+                <div class="col-12 collapse" id="advancedFilters"
+                     th:classappend="${hasAdvancedFilters} ? ' show' : ''">
+                    <div class="card border">
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group col-lg-3 col-md-6">
+                                    <label class="small text-muted mb-1">근무지</label>
+                                    <select class="custom-select" name="workLocationIds" multiple size="6">
+                                        <option th:each="loc : ${workLocations}"
+                                                th:value="${loc.id}"
+                                                th:selected="${searchCondition.workLocationIds != null and searchCondition.workLocationIds.contains(loc.id)}"
+                                                th:text="${loc.workLocationName}">
+                                        </option>
+                                    </select>
+                                    <small class="text-muted">드래그 또는 Ctrl/⌘ 클릭으로 다중 선택</small>
+                                </div>
+                                <div class="form-group col-lg-3 col-md-6">
+                                    <label class="small text-muted mb-1">고용형태</label>
+                                    <select class="custom-select" name="employmentTypeIds" multiple size="6">
+                                        <option th:each="type : ${employmentTypes}"
+                                                th:value="${type.id}"
+                                                th:selected="${searchCondition.employmentTypeIds != null and searchCondition.employmentTypeIds.contains(type.id)}"
+                                                th:text="${type.employmentTypeName}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-3 col-md-6">
+                                    <label class="small text-muted mb-1">학력 요건</label>
+                                    <select class="custom-select" name="educationLevelIds" multiple size="6">
+                                        <option th:each="edu : ${educationLevels}"
+                                                th:value="${edu.id}"
+                                                th:selected="${searchCondition.educationLevelIds != null and searchCondition.educationLevelIds.contains(edu.id)}"
+                                                th:text="${edu.educationLevelName}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-3 col-md-6">
+                                    <label class="small text-muted mb-1">근무분야</label>
+                                    <select class="custom-select" name="workFieldIds" multiple size="6">
+                                        <option th:each="field : ${workFields}"
+                                                th:value="${field.id}"
+                                                th:selected="${searchCondition.workFieldIds != null and searchCondition.workFieldIds.contains(field.id)}"
+                                                th:text="${field.workFieldName}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-12">
+                                    <label class="small text-muted mb-1">표준직무(NCS)</label>
+                                    <select class="custom-select" name="ncsIds" multiple size="8">
+                                        <option th:each="ncs : ${ncsList}"
+                                                th:value="${ncs.id}"
+                                                th:selected="${searchCondition.ncsIds != null and searchCondition.ncsIds.contains(ncs.id)}"
+                                                th:text="${ncs.ncsName}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
         <div class="table-responsive">
             <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
                 <thead>
@@ -60,13 +198,20 @@
 
                     <!-- 처음 -->
                     <li class="page-item" th:classappend="${page.first} ? 'disabled'">
-                        <a class="page-link" th:href="@{|/recruitments?page=0|}">처음</a>
+                        <a class="page-link"
+                           th:href="@{/recruitments(page=0,
+                                                   keyword=${searchCondition.keyword},
+                                                   recruitTypeId=${searchCondition.recruitTypeId},
+                                                   status=${searchCondition.status})}">처음</a>
                     </li>
 
                     <!-- 이전 -->
                     <li class="page-item" th:classappend="${page.first} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{|/recruitments?page=${page.number - 1}|}">이전</a>
+                           th:href="@{/recruitments(page=${page.number - 1},
+                                                    keyword=${searchCondition.keyword},
+                                                    recruitTypeId=${searchCondition.recruitTypeId},
+                                                    status=${searchCondition.status})}">이전</a>
                     </li>
 
                     <!-- 앞쪽 ... -->
@@ -79,7 +224,10 @@
                         th:each="i : ${#numbers.sequence(start, end)}"
                         th:classappend="${i == page.number} ? 'active'">
                         <a class="page-link"
-                           th:href="@{|/recruitments?page=${i}|}"
+                           th:href="@{/recruitments(page=${i},
+                                                    keyword=${searchCondition.keyword},
+                                                    recruitTypeId=${searchCondition.recruitTypeId},
+                                                    status=${searchCondition.status})}"
                            th:text="${i + 1}">1</a>
                     </li>
 
@@ -91,13 +239,19 @@
                     <!-- 다음 -->
                     <li class="page-item" th:classappend="${page.last} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{|/recruitments?page=${page.number + 1}|}">다음</a>
+                           th:href="@{/recruitments(page=${page.number + 1},
+                                                    keyword=${searchCondition.keyword},
+                                                    recruitTypeId=${searchCondition.recruitTypeId},
+                                                    status=${searchCondition.status})}">다음</a>
                     </li>
 
                     <!-- 마지막 -->
                     <li class="page-item" th:classappend="${page.last} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{|/recruitments?page=${page.totalPages - 1}|}">마지막</a>
+                           th:href="@{/recruitments(page=${page.totalPages - 1},
+                                                    keyword=${searchCondition.keyword},
+                                                    recruitTypeId=${searchCondition.recruitTypeId},
+                                                    status=${searchCondition.status})}">마지막</a>
                     </li>
                 </ul>
             </div>
