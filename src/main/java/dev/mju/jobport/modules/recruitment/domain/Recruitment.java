@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -132,6 +134,7 @@ public class Recruitment {
     private List<SelectionStage> selectionStages;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @NotFound(action = NotFoundAction.IGNORE)
     @MapsId
     @JoinColumn(name = "recruitment_id")
     private RecruitmentAttachment recruitmentAttachment;

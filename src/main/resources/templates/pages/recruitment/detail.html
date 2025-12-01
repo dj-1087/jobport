@@ -279,6 +279,70 @@
 
     <!-- 상세 내용 섹션들 : 긴 문단/짧은 문장 모두 대응 -->
     <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-paperclip mr-2"></i>첨부파일
+                    </h6>
+                    <i class="fas fa-download text-gray-400"></i>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm mb-0">
+                        <thead class="thead-light">
+                        <tr>
+                            <th class="text-nowrap">구분</th>
+                            <th class="text-nowrap">파일 정보</th>
+                            <th class="text-nowrap text-right">다운로드</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="attachment : ${attachmentViews}">
+                            <td class="align-middle font-weight-bold"
+                                th:text="${attachment.label}">
+                                공고문
+                            </td>
+                            <td class="align-middle">
+                                <div th:if="${attachment.available}">
+                                    <div class="text-primary font-weight-bold"
+                                         th:text="${attachment.fileName}">
+                                        notice.pdf
+                                    </div>
+                                    <div class="small text-muted"
+                                         th:text="${attachment.originalPath}">
+                                        /uploads/recruitments/notice.pdf
+                                    </div>
+                                </div>
+                                <div th:if="${!attachment.available}" class="text-muted small">
+                                    첨부 없음
+                                </div>
+                            </td>
+                            <td class="align-middle text-right">
+                                <a th:if="${attachment.available}"
+                                   class="btn btn-outline-primary btn-sm"
+                                   th:href="@{${attachment.downloadUrl}}">
+                                    <i class="fas fa-download mr-1"></i>
+                                    다운로드
+                                </a>
+                                <span th:if="${!attachment.available}" class="text-muted small">-</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="px-3 py-2 border-top bg-light small text-muted"
+                         th:if="${recruitment.recruitmentAttachment != null
+                                 and recruitment.recruitmentAttachment.noAttachmentReason != null}">
+                        미첨부 사유 :
+                        <span th:text="${recruitment.recruitmentAttachment.noAttachmentReason}">
+                            기관 측 요청으로 생략
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col-12 col-xl-6 mb-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
