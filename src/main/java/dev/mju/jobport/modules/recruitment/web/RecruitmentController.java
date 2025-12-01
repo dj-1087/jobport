@@ -9,6 +9,7 @@ import dev.mju.jobport.modules.recruitment.domain.Recruitment;
 import dev.mju.jobport.modules.recruitment.domain.RecruitmentAttachment;
 import dev.mju.jobport.modules.recruitment.domain.RecruitmentAttachmentType;
 import dev.mju.jobport.modules.recruitment.web.response.RecruitmentAttachmentView;
+import dev.mju.jobport.modules.recruitment.web.response.SelectionStageGroupView;
 import dev.mju.jobport.modules.recruitment.web.request.RecruitmentSearchCondition;
 import dev.mju.jobport.modules.recruitment.web.request.RecruitmentStatusFilter;
 import jakarta.persistence.EntityNotFoundException;
@@ -87,6 +88,10 @@ public class RecruitmentController {
         model.addAttribute(
                 "attachmentViews",
                 buildAttachmentViews(recruitmentId, getAttachmentOrNull(recruitment))
+        );
+        model.addAttribute(
+                "selectionStageGroups",
+                SelectionStageGroupView.fromStages(recruitment.getSelectionStages())
         );
 
         boolean bookmarked = false;
